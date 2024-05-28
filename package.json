@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "prisma": "^5.14.0"
+  }
+}
