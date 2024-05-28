@@ -134,7 +134,7 @@ const insertUsuario = async function(dadosFilme) {
             return true
         else
             return false
-
+        f
 
     } catch (error) {
         return false
@@ -150,24 +150,25 @@ const updateUsuario = async function(id, dadoAtualizado) {
             dadoAtualizado.foto_perfil != undefined) {
             sql = `update tbl_filme set 
             nome = "${dadoAtualizado.nome}",
-            sinopse = "${dadoAtualizado.sinopse}",
-            duracao = '${dadoAtualizado.duracao}',
-            data_lancamento = '${dadoAtualizado.data_lancamento}',
-            data_relancamento = '${dadoAtualizado.data_relancamento}',
-            foto_capa = '${dadoAtualizado.foto_capa}',
-            valor_unitario = '${dadoAtualizado.valor_unitario}',
-            id_classificacao = '${dadosFilme.id_classificacao}'
+            email = "${dadoAtualizado.email}",
+            telefone = '${dadoAtualizado.telefone}',
+            senha = '${dadoAtualizado.senha}',
+            cpf = '${dadoAtualizado.cpf}',
+            foto_perfil = '${dadoAtualizado.foto_perfil}',
+            endereco_id = '${dadoAtualizado.endereco_id}',
+            status = '${dadosFilme.status}'
             where
             id = ${id}`
         } else {
             sql = `update tbl_filme set 
             nome = "${dadoAtualizado.nome}",
-            sinopse = "${dadoAtualizado.sinopse}",
-            duracao = '${dadoAtualizado.duracao}',
-            data_lancamento = '${dadoAtualizado.data_lancamento}',
-            foto_capa = '${dadoAtualizado.foto_capa}',
-            valor_unitario = '${dadoAtualizado.valor_unitario}',
-            id_classificacao = '${dadosFilme.id_classificacao}'
+            email = "${dadoAtualizado.email}",
+            telefone = '${dadoAtualizado.telefone}',
+            senha = '${dadoAtualizado.senha}',
+            cpf = '${dadoAtualizado.cpf}',
+            foto_perfil = '${dadoAtualizado.foto_perfil}',
+            endereco_id = '${dadoAtualizado.endereco_id}',
+            status = '${dadosFilme.status}'
             where
             id = ${id}`
         }
@@ -220,7 +221,7 @@ const updateUsuario = async function(id, dadoAtualizado) {
 
 module.exports = {
     insertUsuario,
-    // updateFilme,
+    updateUsuario,
     deleteUsuario,
     selectAllUsuarios,
     selectByIdUsuario

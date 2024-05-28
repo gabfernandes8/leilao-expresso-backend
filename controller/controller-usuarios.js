@@ -251,7 +251,7 @@ const setAtualizarUsuario = async function(idUsuario, dadoAtualizado, contentTyp
 
 
 module.exports = {
-    // setAtualizarFilme,
+    setAtualizarUsuario,
     setInserirNovoUsuario,
     setExcluirUsuario,
     getBuscarUsuario,
