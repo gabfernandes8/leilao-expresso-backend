@@ -70,12 +70,27 @@ const updateAdmin = async(dadosAdmin, id) => {
     }
 }
 
-// delete: método put apenas trocando o status, para "esconder" um admin filtrando pelo ID
+// delete/put: método put apenas trocando o status, para "esconder" um admin filtrando pelo ID
 const updateDeleteAdmin = async(id) => {
     try {
         let sql = `update tbl_administrador set status = false where id = ${id}`
 
-        // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsGenero
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável
+        let rsAdmin = await prisma.$executeRawUnsafe(sql)
+        
+        return rsAdmin
+
+    } catch (error) {
+        return false
+    }
+}
+
+// put: método put apenas trocando o status, para aparecer um admin antes escondido
+const updateRecoverAdmin = async(id) => {
+    try {
+        let sql = `update tbl_administrador set status = true where id = ${id}`
+
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável
         let rsAdmin = await prisma.$executeRawUnsafe(sql)
         
         return rsAdmin
@@ -89,7 +104,7 @@ const updateDeleteAdmin = async(id) => {
 const selectAllAdmin = async () => {
 
     try {
-        let sql = 'select * from tbl_administrador order by id desc'
+        let sql = 'select id, nome, email, senha, telefone, cpf from tbl_administrador where status = true order by id desc;'
     
         // $queryrawUnsafe(‘encaminha apenas a variavel’)
         // $queryRaw(‘codigo digitado aqui’)
@@ -110,7 +125,7 @@ const selectByIdAdmin = async (id) => {
     try {
 
         // realiza a busca do ator pelo id
-        let sql = `select * from tbl_administrador where id=${id}`
+        let sql = `select * from tbl_administrador where id=${id} and status=true`
 
         // executa no DBA o script SQL
         let rsAdmin = await prisma.$queryRawUnsafe(sql)
@@ -125,7 +140,7 @@ const selectByIdAdmin = async (id) => {
 const selectByNome = async (nome) => {
     
     try {
-        let sql = `select * from tbl_administrador where nome like '%${nome}%'`
+        let sql = `select * from tbl_administrador where nome like '%${nome}%' where status=true`
     
         // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsAdmin
         let rsAdmin = await prisma.$queryRawUnsafe(sql)
@@ -141,7 +156,7 @@ const selectByNome = async (nome) => {
 const selectLastId = async () => {
     try {
 
-        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_adminstrador limit 1' 
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_administrador limit 1' 
 
         let rsAdmin = await prisma.$queryRawUnsafe(sql)
 
@@ -157,6 +172,7 @@ module.exports={
     insertAdmin,
     updateAdmin,
     updateDeleteAdmin,
+    updateRecoverAdmin,
     selectAllAdmin,
     selectByIdAdmin,
     selectByNome,
