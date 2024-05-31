@@ -26,8 +26,10 @@ app.use((request, response, next) => {
 // cria um objeto do tipo JSON para receber os dados via body nas requisições POST ou PUT
 const bodyParserJSON = bodyParser.json()
 
+// #region IMPORTS
 /****************************** IMPORT DE CONTROLLERS ****************************/
 const controllerAdmin = require('./controller/controller-administrator.js')
+const controllerCategoria = require('./controller/controller-categoria.js')
 /*********************************************************************************/
 
 // #region ADMIN
@@ -112,6 +114,94 @@ app.put('/v1/leilao_expresso/admin/:id', cors(), bodyParserJSON, async(request, 
 
     // encaminha os dados da requisição para a controller enviar para o BD
     let resultDados = await controllerAdmin.setAtualizarAdmin(dadosBody, contentType, admin)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+/*************************************************************************/
+
+// #region CATEGORIA
+
+/****************************** CATEGORIA ****************************/
+// endpoints: listar as categorias
+app.get('/v1/leilao_expresso/categorias', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados da categoria
+    let dadosCategorias = await controllerCategoria.getListarCategoria()
+
+    response.status(dadosCategorias.status_code)
+    response.json(dadosCategorias)
+})
+
+// endpoint: filtrar pelo nome
+app.get('   ', cors(), async(request, response, next) => {
+    let filtro = request.query.nome
+
+    // chama a função para retornar os dados da categoria
+    let dadosCategorias = await controllerCategoria.getCategoriaByNome(filtro)
+
+    response.status(dadosCategorias.status_code)
+    response.json(dadosCategorias)
+})
+
+// endpoint: retorna os dados da categoria, filtrando pelo ID
+app.get('/v1/leilao_expresso/categoria/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição da categoria
+    let idCategoria = request.params.id
+
+    let dadosCategoria = await controllerCategoria.getBuscarCategoria(idCategoria)
+
+    response.status(dadosCategoria.status_code)
+    response.json(dadosCategoria)
+})
+
+// endpoint: inserir novas categorias no Banco de Dados
+    // não esquecer de colocar o bodyParserJSON que é quem define o formato de chegada dos dados
+app.post('/v1/leilao_expresso/categoria', cors(), bodyParserJSON, async(request, response, next) => {
+
+        // recebe o content type da requisição (A API deve receber somente application/json)
+        let contentType = request.headers['content-type']
+    
+        //recebe os dados encaminhados na requisição no body(JSON)
+        let dadosBody = request.body
+    
+        // encaminha os dados da requisição para a controller enviar para o BD
+        let resultDados = await controllerCategoria.setNovaCategoria(dadosBody, contentType)
+        
+        response.status(resultDados.status_code)
+        response.json(resultDados)
+    
+})
+
+// endpoint: editar o status da categoria para false para "exclui-lo"
+app.put('/v1/leilao_expresso/categoria/excluir/:id', cors(), async(request, response, next) => {
+    let categoria = request.params.id
+    let dadosCategoria = await controllerCategoria.setEditarExcluirCategoria(categoria)
+
+    response.status(dadosCategoria.status_code)
+    response.json(dadosCategoria)
+})
+
+// endpoint: editar o status da categoria para true para ativa-la
+app.put('/v1/leilao_expresso/categoria/ativar/:id', cors(), async(request, response, next) => {
+    let categoria = request.params.id
+    let dadosCategoria = await controllerCategoria.setEditarRenovarCategoria(categoria)
+
+    response.status(dadosCategoria.status_code)
+    response.json(dadosCategoria)
+})
+
+// endpoint: editar os dados da categoria
+app.put('/v1/leilao_expresso/categoria/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let categoria = request.params.id
+
+    // recebe o content type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados na requisição no body(JSON)
+    let dadosBody = request.body
+
+    // encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerCategoria.setAtualizarCategoria(dadosBody, contentType, categoria)
     
     response.status(resultDados.status_code)
     response.json(resultDados)
