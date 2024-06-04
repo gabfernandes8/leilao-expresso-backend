@@ -29,6 +29,7 @@ const bodyParserJSON = bodyParser.json()
 const controllerAdmin = require('./controller/controller-administrator.js')
 const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerProduto = require('./controller/controller-produto.js')
+const controllerLote = require('./controller/controller-lotes.js')
 /*********************************************************************************/
 
 // #region ADMIN
@@ -299,6 +300,94 @@ app.put('/v1/leilao_expresso/produto/:id', cors(), bodyParserJSON, async(request
 
     // encaminha os dados da requisição para a controller enviar para o BD
     let resultDados = await controllerProduto.setAtualizarProduto(dadosBody, contentType, produto)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+/*************************************************************************/
+
+// #region LOTES
+
+/****************************** LOTES ****************************/
+// endpoints: listar os lotes
+app.get('/v1/leilao_expresso/lotes', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados do produto
+    let dadosLote = await controllerLote.getListarLotes()
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: filtrar pela data de fim
+app.get('/v1/leilao_expresso/lote/filtro', cors(), async(request, response, next) => {
+    let filtro = request.query.data
+
+    // chama a função para retornar os dados do produto
+    let dadosLote = await controllerLote.getLoteByDataFinal(filtro)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: retorna os dados do lote, filtrando pelo ID
+app.get('/v1/leilao_expresso/lote/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição do lote
+    let idLote = request.params.id
+
+    let dadosLote = await controllerLote.getBuscarLote(idLote)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: inserir novos lotes no Banco de Dados
+    // não esquecer de colocar o bodyParserJSON que é quem define o formato de chegada dos dados
+app.post('/v1/leilao_expresso/lote', cors(), bodyParserJSON, async(request, response, next) => {
+
+        // recebe o content type da requisição (A API deve receber somente application/json)
+        let contentType = request.headers['content-type']
+    
+        //recebe os dados encaminhados na requisição no body(JSON)
+        let dadosBody = request.body
+    
+        // encaminha os dados da requisição para a controller enviar para o BD
+        let resultDados = await controllerLote.setNovoLote(dadosBody, contentType)
+        
+        response.status(resultDados.status_code)
+        response.json(resultDados)
+    
+})
+
+// endpoint: editar o status do lote para false para "exclui-lo"
+app.put('/v1/leilao_expresso/lote/excluir/:id', cors(), async(request, response, next) => {
+    let lote = request.params.id
+    let dadosLote = await controllerLote.setEditarExcluirLote(lote)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: editar o status do lote para true para ativa-lo
+app.put('/v1/leilao_expresso/lote/ativar/:id', cors(), async(request, response, next) => {
+    let lote = request.params.id
+    let dadosLote = await controllerLote.setEditarRenovarLote(lote)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: editar os dados do lote
+app.put('/v1/leilao_expresso/lote/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let lote = request.params.id
+
+    // recebe o content type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados na requisição no body(JSON)
+    let dadosBody = request.body
+
+    // encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerLote.setAtualizarLote(dadosBody, contentType, lote)
     
     response.status(resultDados.status_code)
     response.json(resultDados)
