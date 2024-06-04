@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,140 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model tbl_administrador {
+  id       Int     @id @default(autoincrement())
+  nome     String  @db.VarChar(150)
+  email    String  @db.VarChar(50)
+  telefone String  @db.VarChar(12)
+  senha    String  @db.VarChar(30)
+  cpf      String  @db.VarChar(11)
+  status   Boolean
+}
+
+model tbl_arremates {
+  id          Int        @id @unique(map: "id") @default(autoincrement())
+  valor_final Float
+  venda_id    Int
+  lance_id    Int
+  status      Boolean
+  tbl_vendas  tbl_vendas @relation(fields: [venda_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_arremates_ibfk_1")
+  tbl_lances  tbl_lances @relation(fields: [lance_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_arremates_ibfk_2")
+
+  @@index([lance_id], map: "lance_id")
+  @@index([venda_id], map: "venda_id")
+}
+
+model tbl_categorias {
+  id          Int           @id @unique(map: "id") @default(autoincrement())
+  nome        String        @db.VarChar(45)
+  status      Boolean
+  tbl_produto tbl_produto[]
+}
+
+model tbl_enderecos {
+  id           Int            @id @unique(map: "id") @default(autoincrement())
+  cep          String         @db.VarChar(8)
+  logradouro   String         @db.VarChar(100)
+  numero_casa  String         @db.VarChar(10)
+  complemento  String?        @db.VarChar(45)
+  bairro       String         @db.VarChar(45)
+  cidade       String         @db.VarChar(45)
+  status       Boolean
+  tbl_usuarios tbl_usuarios[]
+}
+
+model tbl_lances {
+  id            Int             @id @unique(map: "id") @default(autoincrement())
+  valor         String          @db.VarChar(45)
+  usuario_id    Int
+  lote_id       Int
+  status        Boolean
+  tbl_arremates tbl_arremates[]
+  tbl_usuarios  tbl_usuarios    @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_lances_ibfk_1")
+  tbl_lotes     tbl_lotes       @relation(fields: [lote_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_lances_ibfk_2")
+
+  @@index([lote_id], map: "lote_id")
+  @@index([usuario_id], map: "usuario_id")
+}
+
+model tbl_lotes {
+  id           Int          @id @unique(map: "id") @default(autoincrement())
+  data_fim     DateTime?    @db.DateTime(0)
+  produto_id   Int
+  usuario_id   Int
+  status       Boolean
+  tbl_lances   tbl_lances[]
+  tbl_produto  tbl_produto  @relation(fields: [produto_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_lotes_ibfk_1")
+  tbl_usuarios tbl_usuarios @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_lotes_ibfk_2")
+
+  @@index([produto_id], map: "produto_id")
+  @@index([usuario_id], map: "usuario_id")
+}
+
+model tbl_preferencias_clientes {
+  id                        Int                         @id @unique(map: "id") @default(autoincrement())
+  nome                      String                      @db.VarChar(50)
+  status                    Boolean
+  tbl_preferencias_usuarios tbl_preferencias_usuarios[]
+}
+
+model tbl_preferencias_usuarios {
+  id                        Int                       @id @unique(map: "id") @default(autoincrement())
+  usuario_id                Int
+  preferencia_id            Int
+  status                    Boolean
+  tbl_usuarios              tbl_usuarios              @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_preferencias_usuarios_ibfk_1")
+  tbl_preferencias_clientes tbl_preferencias_clientes @relation(fields: [preferencia_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_preferencias_usuarios_ibfk_2")
+
+  @@index([preferencia_id], map: "preferencia_id")
+  @@index([usuario_id], map: "usuario_id")
+}
+
+model tbl_produto {
+  id             Int            @id @unique(map: "id") @default(autoincrement())
+  nome           String         @db.Text
+  descricao      String         @db.Text
+  valor_fixo     Float
+  foto_produto   String         @db.VarChar(255)
+  categoria_id   Int
+  status         Boolean
+  tbl_lotes      tbl_lotes[]
+  tbl_categorias tbl_categorias @relation(fields: [categoria_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_produto_ibfk_1")
+  tbl_vendas     tbl_vendas[]
+
+  @@index([categoria_id], map: "categoria_id")
+}
+
+model tbl_usuarios {
+  id                        Int                         @id @unique(map: "id") @default(autoincrement())
+  nome                      String                      @db.VarChar(150)
+  email                     String                      @db.VarChar(50)
+  telefone                  String                      @db.VarChar(12)
+  senha                     String                      @db.VarChar(30)
+  cpf                       String                      @db.VarChar(11)
+  foto_perfil               String?                     @db.VarChar(255)
+  endereco_id               Int
+  status                    Boolean
+  tbl_lances                tbl_lances[]
+  tbl_lotes                 tbl_lotes[]
+  tbl_preferencias_usuarios tbl_preferencias_usuarios[]
+  tbl_enderecos             tbl_enderecos               @relation(fields: [endereco_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_usuarios_ibfk_1")
+  tbl_vendas                tbl_vendas[]
+
+  @@index([endereco_id], map: "endereco_id")
+}
+
+model tbl_vendas {
+  id            Int             @id @unique(map: "id") @default(autoincrement())
+  usuario_id    Int
+  produto_id    Int
+  status        Boolean
+  tbl_arremates tbl_arremates[]
+  tbl_usuarios  tbl_usuarios    @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_vendas_ibfk_1")
+  tbl_produto   tbl_produto     @relation(fields: [produto_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_vendas_ibfk_2")
+
+  @@index([produto_id], map: "produto_id")
+  @@index([usuario_id], map: "usuario_id")
 }
