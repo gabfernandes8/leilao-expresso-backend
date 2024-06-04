@@ -43,13 +43,9 @@ const updateCategoria = async(dadosCategoria, id) => {
     try {
         let sql 
 
-        sql = `update tbl_categorias set 
-                                            nome = "${dadosCategoria.nome}",
-                                            
-                                            where id = ${id}`
+        sql = `update tbl_categorias set nome = "${dadosCategoria.nome}" where id = ${id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
-
 
         // validação para verificar se o insert funcionou no DB
         if(result){
@@ -133,8 +129,8 @@ const selectByIdCategoria = async (id) => {
 const selectByNome = async (nome) => {
     
     try {
-        let sql = `select * from tbl_categorias where nome like '%${nome}%' where status=true`
-
+        let sql = `select * from tbl_categorias where nome like '%${nome}%' and status=true`
+       
         // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsCategoria
         let rsCategoria = await prisma.$queryRawUnsafe(sql)
         return rsCategoria

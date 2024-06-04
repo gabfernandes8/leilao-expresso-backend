@@ -70,10 +70,10 @@ const setAtualizarCategoria = async (dadosCategoria, contentType, id) => {
             } else {
                 
                 //envia os dados para o DAO inserir no BD
-                let categoriAtt = await categoriaDAO.updateCategoria(dadosCategoria, categoria);
+                let categoriaAtt = await categoriaDAO.updateCategoria(dadosCategoria, categoria);
 
                 //validação para verificar se os dados foram inseridos pelo DAO no BD 
-                if (categoriAtt) {
+                if (categoriaAtt) {
                     dadosCategoria.id = categoria
 
                     // cria o padrão de JSON para retorno dos dados criados no DB
@@ -207,7 +207,7 @@ const getCategoriaByNome = async (nome) => {
         return message.ERROR_INVALID_PARAM //400
     } else {
         let dadosCategoria = await categoriaDAO.selectByNome(filtro)
-        
+
         if (dadosCategoria) {
             if (dadosCategoria.length > 0) {
                 categoriaJSON.categoria = dadosCategoria
