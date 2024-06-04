@@ -148,7 +148,7 @@ const updateUsuario = async function(id, dadoAtualizado) {
         if (dadoAtualizado.foto_perfil != '' &&
             dadoAtualizado.foto_perfil != null &&
             dadoAtualizado.foto_perfil != undefined) {
-            sql = `update tbl_filme set 
+            sql = `update tbl_usuario set 
             nome = "${dadoAtualizado.nome}",
             email = "${dadoAtualizado.email}",
             telefone = '${dadoAtualizado.telefone}',
@@ -160,7 +160,7 @@ const updateUsuario = async function(id, dadoAtualizado) {
             where
             id = ${id}`
         } else {
-            sql = `update tbl_filme set 
+            sql = `update tbl_usuario set 
             nome = "${dadoAtualizado.nome}",
             email = "${dadoAtualizado.email}",
             telefone = '${dadoAtualizado.telefone}',

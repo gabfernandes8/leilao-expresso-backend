@@ -1,29 +1,29 @@
-// objetivo: Arquivo responsavel pela interação entre o APP e o Model, que teremos todas as tratativas e regra de negocio para o crud de Usuarios
-// data: 28-05-24 - inicio
+// objetivo: Arquivo responsavel pela interação entre o APP e o Model, que teremos todas as tratativas e regra de negocio para o crud de Enderecos
+// data: 04-06-24 - inicio
 // autor: Eduardo Goncalves de Oliveira
 // versao: 1.0
 
 // import do arq DAO para manipular dados do banco de dados
-const usuariosDAO = require('../model/DAO/usuarios')
+const enderecosDAO = require('../model/DAO/enderecos')
 
 // import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
 
 // funcao para retornar todos os usuarios do banco de dados
-const getListarUsuarios = async function() {
+const getListarEnderecos = async function() {
 
-    let usuariosJSON = {}
+    let enderecosJSON = {}
 
     // chama a função do dao para retornar dados no bd
-    let dadosUsuarios = await usuariosDAO.selectAllUsuarios()
+    let dadosEnderecos = await enderecosDAO.selectAllEnderecos()
 
     // verifica se existem dados
-    if (dadosUsuarios) {
+    if (dadosEnderecos) {
         // montando o json para retornar para o app
-        usuariosJSON.usuarios = dadosUsuarios
-        usuariosJSON.quantidade = dadosUsuarios.length
-        usuariosJSON.status_code = 200
-        return usuariosJSON
+        enderecosJSON.enderecos = dadosEnderecos
+        enderecosJSON.quantidade = dadosEnderecos.length
+        enderecosJSON.status_code = 200
+        return enderecosJSON
     } else {
         return false
     }
@@ -31,29 +31,29 @@ const getListarUsuarios = async function() {
 
 
 // funcao para buscar um usuario específico do banco de dados pelo id
-const getBuscarUsuario = async function(id) {
+const getBuscarEndereco = async function(id) {
 
     // recebe o id do usuario
-    let idUsuario = id
-    let usuarioJSON = {}
+    let idEndereco = id
+    let enderecoJSON = {}
 
     // validação para id vazio, indefinido ou nao numerico
-    if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario)) {
+    if (idEndereco == '' || idEndereco == undefined || isNaN(idEndereco)) {
         return message.ERROR_INVALID_ID
     } else {
 
         // chama a função do dao para retornar dados no bd
-        let dadosUsuariosPorID = await usuariosDAO.selectByIdUsuario(idUsuario)
+        let dadosEnderecosPorID = await enderecosDAO.selectByIdEndereco(idEndereco)
 
         // verifica se dados no servidor de banco foram processados
-        if (dadosUsuariosPorID) {
+        if (dadosEnderecosPorID) {
 
             // validaão para veificar se existem dados a serem processados
-            if (dadosUsuariosPorID.length > 0) {
+            if (dadosEnderecosPorID.length > 0) {
                 // montando o json para retornar para o app
-                usuarioJSON.usuarios = dadosUsuariosPorID
-                usuarioJSON.status_code = 200
-                return usuarioJSON //200
+                enderecoJSON.usuarios = dadosEnderecosPorID
+                enderecoJSON.status_code = 200
+                return enderecoJSON //200
             } else {
                 return message.ERROR_NOT_FOUND //400
             }
@@ -64,19 +64,19 @@ const getBuscarUsuario = async function(id) {
 }
 
 // funcao para excluir um usuario do banco de dados
-const setExcluirUsuario = async function(id) {
+const setExcluirEndereco = async function(id) {
 
     // recebe o id do usuario
-    let idUsuario = id
-    let usuarioJSON = {}
+    let idEndereco = id
+    let enderecoJSON = {}
 
     // validação para id vazio, indefinido ou nao numerico
-    if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario)) {
+    if (idEndereco == '' || idEndereco == undefined || isNaN(idEndereco)) {
         return message.ERROR_INVALID_ID
     } else {
 
         // chama a função do dao para retornar dados no bd
-        let deletePorID = await usuariosDAO.deleteUsuario(idUsuario)
+        let deletePorID = await enderecosDAO.deleteEndereco(idEndereco)
 
         // verifica se dados no servidor de banco foram processados
         if (deletePorID) {
@@ -84,8 +84,8 @@ const setExcluirUsuario = async function(id) {
             // validação para veificar se existem dados a serem processados
             if (deletePorID.length > 0) {
                 // montando o json para retornar para o app
-                usuarioJSON.usuarios = deletePorID
-                usuarioJSON.status_code = 500
+                enderecoJSON.enderecos = deletePorID
+                enderecoJSON.status_code = 500
                 return message.ERROR_INTERNAL_SERVER
             } else {
                 return message.REQUEST_SUCCEEDED //400
@@ -96,27 +96,25 @@ const setExcluirUsuario = async function(id) {
     }
 }
 
+
 // funcao para inserir um novo usuario do banco de dados
-const setInserirNovoUsuario = async function(dadosUsuario, contentType) {
+const setInserirNovoEndereco = async function(dadosEndereco, contentType) {
 
     try {
-
 
         // recebe o tipo de conteudo Content-type da requisição ( a api deve receber dados application/json)
         if (String(contentType).toLowerCase() == 'application/json') {
 
             // cia a variavel json
-            let resultDadosUsuario = {}
+            let resultDadosEndereco = {}
 
             // validação de dados
-            if (dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 150 ||
-                dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 50 ||
-                dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.length > 12 ||
-                dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 30 ||
-                dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length > 11 ||
-                dadosUsuario.foto_perfil == '' || dadosUsuario.foto_perfil == undefined || dadosUsuario.foto_perfil.length > 255 ||
-                dadosUsuario.endereco_id == '' || dadosUsuario.endereco_id == undefined ||
-                dadosUsuario.status == '' || dadosUsuario.status == undefined || dadosUsuario.status.length > 1) {
+            if (dadosEndereco.cep == '' || dadosEndereco.cep == undefined || dadosEndereco.cep.length > 8 ||
+                dadosEndereco.logradouro == '' || dadosEndereco.logradouro == undefined || dadosEndereco.logradouro.length > 100 ||
+                dadosEndereco.numero_casa == '' || dadosEndereco.numero_casa == undefined || dadosEndereco.numero_casa.length > 10 ||
+                dadosEndereco.bairro == '' || dadosEndereco.bairro == undefined || dadosEndereco.bairro.length > 45 ||
+                dadosEndereco.cidade == '' || dadosEndereco.cidade == undefined || dadosEndereco.cidade.length > 45 ||
+                dadosEndereco.status == '' || dadosEndereco.status == undefined || dadosEndereco.status.length > 1) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
@@ -124,8 +122,8 @@ const setInserirNovoUsuario = async function(dadosUsuario, contentType) {
                 let dadosValidated = false
 
                 // validação de digitação para a foto de perfil: que não é campo obrigatorio
-                if (dadosUsuario.foto_perfil != null && dadosUsuario.foto_perfil != undefined && dadosUsuario.foto_perfil != "") {
-                    if (dadosUsuario.foto_perfil.length > 255) {
+                if (dadosEndereco.complemento != null && dadosEndereco.complemento != undefined && dadosEndereco.complemento != "") {
+                    if (dadosEndereco.complemento.length > 45) {
                         return message.ERROR_REQUIRED_FIELDS; // 400 - campos preenchidos incorretamente
                     } else {
                         dadosValidated = true // se a foto estiver dentro do escopo de char definidos
@@ -138,18 +136,18 @@ const setInserirNovoUsuario = async function(dadosUsuario, contentType) {
                 if (dadosValidated) {
 
                     // encaminha dados para o dao inserir no banco de dados
-                    let novoUsuario = await usuariosDAO.insertUsuario(dadosUsuario)
+                    let novoUsuario = await enderecosDAO.insertEndereco(dadosEndereco)
 
                     // validação dos dados sendo nseridos pelo dao no banco de dados
                     if (novoUsuario) {
 
                         // cria o padrão json ´para o retoro dos dados criados
-                        resultDadosUsuario.status = message.SUCESS_CREATED_ITEM.status
-                        resultDadosUsuario.status_code = message.SUCESS_CREATED_ITEM.status_code
-                        resultDadosUsuario.message = message.SUCESS_CREATED_ITEM.message
-                        resultDadosUsuario.filme = dadosUsuario
+                        resultDadosEndereco.status = message.SUCESS_CREATED_ITEM.status
+                        resultDadosEndereco.status_code = message.SUCESS_CREATED_ITEM.status_code
+                        resultDadosEndereco.message = message.SUCESS_CREATED_ITEM.message
+                        resultDadosEndereco.filme = dadosEndereco
 
-                        return resultDadosUsuario // 201 
+                        return resultDadosEndereco // 201 
                     } else {
                         return message.ERROR_INTERNAL_SERVER_DB // 500 erro na camada do DAO
                     }
@@ -163,43 +161,39 @@ const setInserirNovoUsuario = async function(dadosUsuario, contentType) {
     }
 }
 
-
-
 // funcao para atualizar um filme do banco de dados
-const setAtualizarUsuario = async function(idUsuario, dadoAtualizado, contentType) {
+const setAtualizarEndereco = async function(idEndereco, dadoAtualizado, contentType) {
     try {
 
         // Validação de content-type (apenas aplication/json)
         if (String(contentType).toLowerCase() == 'application/json') {
-            let dadosID = filmesDAO.selectByIdFilme()
+            let dadosID = enderecosDAO.selectByIdEndereco()
 
-            if (idUsuario == '' || idUsuario == undefined || idUsuario == isNaN(idUsuario) || idUsuario == null) {
+            if (idEndereco == '' || idEndereco == undefined || idEndereco == isNaN(idEndereco) || idEndereco == null) {
                 return message.ERROR_INVALID_ID
-            } else if (idUsuario > dadosID.length) {
+            } else if (idEndereco > dadosID.length) {
                 return message.ERROR_NOT_FOUND
             } else {
                 // Cria o objeto JSON para devolver os dados criados na requisição
-                let atualizarUsuarioJSON = {}
+                let atualizarEnderecoJSON = {}
 
                 //Validação de campos obrigatórios ou com digitação inválida
-                if (dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 150 ||
-                    dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 50 ||
-                    dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.length > 12 ||
-                    dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 30 ||
-                    dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length > 11 ||
-                    dadosUsuario.foto_perfil == '' || dadosUsuario.foto_perfil == undefined || dadosUsuario.foto_perfil.length > 255 ||
-                    dadosUsuario.endereco_id == '' || dadosUsuario.endereco_id == undefined ||
-                    dadosUsuario.status == '' || dadosUsuario.status == undefined || dadosUsuario.status.length > 1) {
+                if (dadosEndereco.cep == '' || dadosEndereco.cep == undefined || dadosEndereco.cep.length > 8 ||
+                    dadosEndereco.logradouro == '' || dadosEndereco.logradouro == undefined || dadosEndereco.logradouro.length > 100 ||
+                    dadosEndereco.numero_casa == '' || dadosEndereco.numero_casa == undefined || dadosEndereco.numero_casa.length > 10 ||
+                    dadosEndereco.bairro == '' || dadosEndereco.bairro == undefined || dadosEndereco.bairro.length > 45 ||
+                    dadosEndereco.cidade == '' || dadosEndereco.cidade == undefined || dadosEndereco.cidade.length > 45 ||
+                    dadosEndereco.status == '' || dadosEndereco.status == undefined || dadosEndereco.status.length > 1) {
                     return message.ERROR_REQUIRED_FIELDS
                 } else {
                     let validateStatus = false
 
                     // Outra validação com campos obrigatorios ou com digitação inválida
-                    if (dadoAtualizado.foto_perfil != null &&
-                        dadoAtualizado.foto_perfil != '' &&
-                        dadoAtualizado.foto_perfil != undefined) {
+                    if (dadoAtualizado.complemento != null &&
+                        dadoAtualizado.complemento != '' &&
+                        dadoAtualizado.complemento != undefined) {
 
-                        if (dadoAtualizado.foto_perfil.length > 255) {
+                        if (dadoAtualizado.complemento.length > 45) {
                             return message.ERROR_REQUIRED_FIELDS //400
                         } else {
                             validateStatus = true
@@ -213,7 +207,7 @@ const setAtualizarUsuario = async function(idUsuario, dadoAtualizado, contentTyp
                     if (validateStatus) {
 
                         // Encaminha os dados do filme para o DAO inserir no DB
-                        let dadosUsuario = await usuariosDAO.updateUsuario(idUsuario, dadoAtualizado)
+                        let dadosEndereco = await enderecosDAO.updateEndereco(idEndereco, dadoAtualizado)
 
                         // if(atualizarFilme){
                         //     let idFilmes = await filmesDAO.IDFilme()
@@ -222,14 +216,14 @@ const setAtualizarUsuario = async function(idUsuario, dadoAtualizado, contentTyp
                         // }
 
                         // Validação para verificar se o DAO inseriu os dados do DB
-                        if (dadosUsuario) {
+                        if (dadosEndereco) {
 
                             //Cria o JSON de retorno dos dados (201)
-                            atualizarUsuarioJSON.usuario = dadosUsuario
-                            atualizarUsuarioJSON.status = message.SUCCESS_UPDATED_ITEM.status
-                            atualizarUsuarioJSON.status_code = message.SUCCESS_UPDATED_ITEM.status_code
-                            atualizarUsuarioJSON.message = message.SUCCESS_UPDATED_ITEM.message
-                            return atualizarUsuarioJSON //201
+                            atualizarEnderecoJSON.endereco = dadosEndereco
+                            atualizarEnderecoJSON.status = message.SUCCESS_UPDATED_ITEM.status
+                            atualizarEnderecoJSON.status_code = message.SUCCESS_UPDATED_ITEM.status_code
+                            atualizarEnderecoJSON.message = message.SUCCESS_UPDATED_ITEM.message
+                            return atualizarEnderecoJSON //201
 
                         } else {
                             return message.ERROR_INTERNAL_SERVER_DB //500
@@ -247,13 +241,10 @@ const setAtualizarUsuario = async function(idUsuario, dadoAtualizado, contentTyp
     }
 }
 
-
-
-
 module.exports = {
-    setAtualizarUsuario,
-    setInserirNovoUsuario,
-    setExcluirUsuario,
-    getBuscarUsuario,
-    getListarUsuarios
+    setAtualizarEndereco,
+    setInserirNovoEndereco,
+    setExcluirEndereco,
+    getBuscarEndereco,
+    getListarEnderecos
 }
