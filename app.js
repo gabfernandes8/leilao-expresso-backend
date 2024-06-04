@@ -30,6 +30,7 @@ const bodyParserJSON = bodyParser.json()
 /****************************** IMPORT DE CONTROLLERS ****************************/
 const controllerAdmin = require('./controller/controller-administrator.js')
 const controllerCategoria = require('./controller/controller-categoria.js')
+const controllerProduto = require('./controller/controller-produto.js')
 /*********************************************************************************/
 
 // #region ADMIN
@@ -133,7 +134,7 @@ app.get('/v1/leilao_expresso/categorias', cors(), async(request, response, next)
 })
 
 // endpoint: filtrar pelo nome
-app.get('   ', cors(), async(request, response, next) => {
+app.get('/v1/leilao_expresso/categoria/filtro', cors(), async(request, response, next) => {
     let filtro = request.query.nome
 
     // chama a função para retornar os dados da categoria
@@ -202,6 +203,104 @@ app.put('/v1/leilao_expresso/categoria/:id', cors(), bodyParserJSON, async(reque
 
     // encaminha os dados da requisição para a controller enviar para o BD
     let resultDados = await controllerCategoria.setAtualizarCategoria(dadosBody, contentType, categoria)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+/*************************************************************************/
+
+// #region PRODUTOS
+
+/****************************** PRODUTOS ****************************/
+// endpoints: listar os produtos
+app.get('/v1/leilao_expresso/produtos', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados do produto
+    let dadosProdutos = await controllerProduto.getListarProdutos()
+
+    response.status(dadosProdutos.status_code)
+    response.json(dadosProdutos)
+})
+
+// endpoint: filtrar pela categoria
+app.get('/v1/leilao_expresso/produto/filtro', cors(), async(request, response, next) => {
+    let filtro = request.query.categoria
+
+    // chama a função para retornar os dados do produto
+    let dadosProdutos = await controllerProduto.getProdutoByCategoria(filtro)
+
+    response.status(dadosProdutos.status_code)
+    response.json(dadosProdutos)
+})
+// endpoint: filtrar pelo nome
+app.get('/v1/leilao_expresso/produto/filtro', cors(), async(request, response, next) => {
+    let filtro = request.query.nome
+
+    // chama a função para retornar os dados do produto
+    let dadosProdutos = await controllerProduto.getProdutoByNome(filtro)
+
+    response.status(dadosProdutos.status_code)
+    response.json(dadosProdutos)
+})
+
+// endpoint: retorna os dados do produto, filtrando pelo ID
+app.get('/v1/leilao_expresso/produto/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição do produto
+    let idProduto = request.params.id
+
+    let dadosProduto = await controllerProduto.getBuscarProduto(idProduto)
+
+    response.status(dadosProduto.status_code)
+    response.json(dadosProduto)
+})
+
+// endpoint: inserir novos produtos no Banco de Dados
+    // não esquecer de colocar o bodyParserJSON que é quem define o formato de chegada dos dados
+app.post('/v1/leilao_expresso/produto', cors(), bodyParserJSON, async(request, response, next) => {
+
+        // recebe o content type da requisição (A API deve receber somente application/json)
+        let contentType = request.headers['content-type']
+    
+        //recebe os dados encaminhados na requisição no body(JSON)
+        let dadosBody = request.body
+    
+        // encaminha os dados da requisição para a controller enviar para o BD
+        let resultDados = await controllerProduto.setNovoProduto(dadosBody, contentType)
+        
+        response.status(resultDados.status_code)
+        response.json(resultDados)
+    
+})
+
+// endpoint: editar o status do produto para false para "exclui-lo"
+app.put('/v1/leilao_expresso/produto/excluir/:id', cors(), async(request, response, next) => {
+    let produto = request.params.id
+    let dadosProduto = await controllerProduto.setEditarExcluirProduto(produto)
+
+    response.status(dadosProduto.status_code)
+    response.json(dadosProduto)
+})
+
+// endpoint: editar o status do produto para true para ativa-la
+app.put('/v1/leilao_expresso/produto/ativar/:id', cors(), async(request, response, next) => {
+    let produto = request.params.id
+    let dadosProduto = await controllerProduto.setEditarRenovarProduto(produto)
+
+    response.status(dadosProduto.status_code)
+    response.json(dadosProduto)
+})
+
+// endpoint: editar os dados do produto
+app.put('/v1/leilao_expresso/produto/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let produto = request.params.id
+
+    // recebe o content type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados na requisição no body(JSON)
+    let dadosBody = request.body
+
+    // encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerProduto.setAtualizarProduto(dadosBody, contentType, produto)
     
     response.status(resultDados.status_code)
     response.json(resultDados)
