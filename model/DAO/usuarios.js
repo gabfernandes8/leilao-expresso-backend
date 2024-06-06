@@ -87,7 +87,8 @@ const insertUsuario = async function(dadosFilme) {
                 senha,
                 cpf,
                 foto_perfil,
-                endereco_id
+                endereco_id,
+                status
                 ) values (
                     '${dadosFilme.nome}', 
                     '${dadosFilme.email}',
@@ -95,7 +96,8 @@ const insertUsuario = async function(dadosFilme) {
                     '${dadosFilme.senha}', 
                     '${dadosFilme.cpf}',
                     null,                    
-                    '${dadosFilme.endereco_id}'                    
+                    '${dadosFilme.endereco_id}' 
+                    true                   
 
             )`;
         } else {
@@ -108,6 +110,7 @@ const insertUsuario = async function(dadosFilme) {
                 cpf,
                 foto_perfil,
                 endereco_id,
+                status
                 ) values (
                     '${dadosFilme.nome}', 
                     '${dadosFilme.email}',
@@ -115,7 +118,8 @@ const insertUsuario = async function(dadosFilme) {
                     '${dadosFilme.senha}', 
                     '${dadosFilme.cpf}',
                     '${dadosFilme.foto_perfil}', 
-                    '${dadosFilme.endereco_id}',                    
+                    '${dadosFilme.endereco_id}',
+                    true                  
             )`;
         }
 
@@ -148,7 +152,9 @@ const updateUsuario = async function(id, dadoAtualizado) {
             senha = '${dadoAtualizado.senha}',
             cpf = '${dadoAtualizado.cpf}',
             foto_perfil = '${dadoAtualizado.foto_perfil}',
+
             endereco_id = '${dadoAtualizado.endereco_id}',
+
             where
             id = ${id}`
         } else {
@@ -159,7 +165,9 @@ const updateUsuario = async function(id, dadoAtualizado) {
             senha = '${dadoAtualizado.senha}',
             cpf = '${dadoAtualizado.cpf}',
             foto_perfil = '${dadoAtualizado.foto_perfil}',
+
             endereco_id = '${dadoAtualizado.endereco_id}',
+
             where
             id = ${id}`
         }
