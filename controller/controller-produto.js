@@ -169,24 +169,13 @@ const getListarProdutos = async () => {
 
     if (dadosProdutos) {
         if (dadosProdutos.length > 0) {
-
-    
-
-           const Arrayprodutos = await Promise.all(dadosProdutos.map(async (produto) => {
-
-                // console.log(produto);
-
+           const ArrayProdutos = await Promise.all(dadosProdutos.map(async (produto) => {
                 let categoria = await controllerCategoria.selectByIdCategoria(produto.categoria_id)
-
                 produto.categoria_id = categoria
-
                 return produto
-
             }))
 
-            console.log(Arrayprodutos);
-
-            produtoJSON.produtos = Arrayprodutos
+            produtoJSON.produtos = ArrayProdutos
             produtoJSON.qt = dadosProdutos.length
             produtoJSON.status_code = 200
             return produtoJSON
