@@ -232,6 +232,57 @@ const getLoteByDataFinal = async (dataFinal) => {
     }
 }
 
+// get: função para buscar um lote filtrando pelo valor
+const getLoteByValorFixo = async (valorFixo) => {
+    let lotesJSON = {}
+    let filtro = valorFixo
+    
+    if (filtro == '' || filtro == undefined) {
+        return message.ERROR_INVALID_PARAM //400
+    } else {
+        let dadosLote = await loteDAO.selectByValor(filtro)
+
+        if (dadosLote) {
+            if (dadosLote.length > 0) {
+                lotesJSON.lote = dadosLote
+                lotesJSON.qt = dadosLote.length
+                lotesJSON.status_code = 200
+                return lotesJSON
+            } else {
+                return message.ERROR_NOT_FOUND //404
+            }
+        } else {
+            return message.ERROR_INTERNAL_SERVER_DBA // 500
+        }
+    }
+}
+
+// get: função para buscar um lote filtrando pela categoria
+const getLoteByCategoria = async (categoria) => {
+    let lotesJSON = {}
+    let filtro = categoria
+    
+    if (filtro == '' || filtro == undefined) {
+        return message.ERROR_INVALID_PARAM //400
+    } else {
+        let dadosLote = await loteDAO.selectByCategoria(filtro)
+
+        if (dadosLote) {
+            if (dadosLote.length > 0) {
+                lotesJSON.lote = dadosLote
+                lotesJSON.qt = dadosLote.length
+                lotesJSON.status_code = 200
+                return lotesJSON
+            } else {
+                return message.ERROR_NOT_FOUND //404
+            }
+        } else {
+            return message.ERROR_INTERNAL_SERVER_DBA // 500
+        }
+    }
+}
+
+
 module.exports={
     setNovoLote,
     setAtualizarLote,
@@ -239,5 +290,7 @@ module.exports={
     setEditarRenovarLote,
     getListarLotes,
     getBuscarLote,
-    getLoteByDataFinal
+    getLoteByDataFinal,
+    getLoteByCategoria,
+    getLoteByValorFixo
 }
