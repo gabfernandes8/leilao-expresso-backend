@@ -311,7 +311,7 @@ app.put('/v1/leilao_expresso/produto/:id', cors(), bodyParserJSON, async(request
 
 // #region LOTES
 
-/****************************** LOTES AAAA***********************************/
+/****************************** LOTES ***********************************/
 // endpoints: listar os lotes
 app.get('/v1/leilao_expresso/lotes', cors(), async(request, response, next) => {
     // chama a função para retornar os dados do produto
