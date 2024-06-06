@@ -6,6 +6,8 @@
 // import do arq DAO para manipular dados do banco de dados
 const usuariosDAO = require('../model/DAO/usuarios')
 
+const enderecosDAO = require('../model/DAO/enderecos.js')
+
 // import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
 
@@ -17,12 +19,33 @@ const getListarUsuarios = async function() {
     // chama a função do dao para retornar dados no bd
     let dadosUsuarios = await usuariosDAO.selectAllUsuarios()
 
+    const newListUsers = await Promise.all(dadosUsuarios.map(async (usuario)  => {
+        let dadosEnderecoUser = await enderecosDAO.selectByIdEndereco(usuario.endereco_id)
+        
+        usuario.endereco_id = dadosEnderecoUser
+        
+        return usuario
+        
+    }))
+
+    console.log(newListUsers);
+
     // verifica se existem dados
-    if (dadosUsuarios) {
+    if (newListUsers) {
         // montando o json para retornar para o app
-        usuariosJSON.usuarios = dadosUsuarios
-        usuariosJSON.quantidade = dadosUsuarios.length
+        usuariosJSON.usuarios = newListUsers
+        usuariosJSON.quantidade = newListUsers.length
         usuariosJSON.status_code = 200
+
+
+
+
+
+        // console.log(dadosEnderecoUser);
+        //dadosUsuarios.endereco_id = dadosEnderecoUser
+
+        // console.log(dadosUsuarios);
+
         return usuariosJSON
     } else {
         return false
@@ -115,8 +138,7 @@ const setInserirNovoUsuario = async function(dadosUsuario, contentType) {
                 dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 30 ||
                 dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length > 11 ||
                 dadosUsuario.foto_perfil == '' || dadosUsuario.foto_perfil == undefined || dadosUsuario.foto_perfil.length > 255 ||
-                dadosUsuario.endereco_id == '' || dadosUsuario.endereco_id == undefined ||
-                dadosUsuario.status == '' || dadosUsuario.status == undefined || dadosUsuario.status.length > 1) {
+                dadosUsuario.endereco_id == '' || dadosUsuario.endereco_id == undefined) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
@@ -144,14 +166,14 @@ const setInserirNovoUsuario = async function(dadosUsuario, contentType) {
                     if (novoUsuario) {
 
                         // cria o padrão json ´para o retoro dos dados criados
-                        resultDadosUsuario.status = message.SUCESS_CREATED_ITEM.status
-                        resultDadosUsuario.status_code = message.SUCESS_CREATED_ITEM.status_code
-                        resultDadosUsuario.message = message.SUCESS_CREATED_ITEM.message
+                        resultDadosUsuario.status = message.SUCCESS_CREATED_ITEM.status
+                        resultDadosUsuario.status_code = message.SUCCESS_CREATED_ITEM.status_code
+                        resultDadosUsuario.message = message.SUCCESS_CREATED_ITEM.message
                         resultDadosUsuario.filme = dadosUsuario
 
                         return resultDadosUsuario // 201 
                     } else {
-                        return message.ERROR_INTERNAL_SERVER_DB // 500 erro na camada do DAO
+                        return message.ERROR_INTERNAL_SERVER_DBA // 500 erro na camada do DAO
                     }
                 }
             }
