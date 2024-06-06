@@ -159,6 +159,43 @@ const selectByDataFinal = async (dataFinal) => {
     }
 }
 
+// get: buscar o lote existente filtrando pelo valor
+const selectByValor = async(valorFixo) => {
+    try {
+        let sql = `select tbl_lotes.id, tbl_lotes.data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, tbl_produto.valor_fixo, tbl_categorias.nome from tbl_lotes 
+                    inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
+                    inner join tbl_categorias on tbl_categorias.id=tbl_produto.categoria_id
+                    inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
+                    where tbl_produto.valor_fixo like "${valorFixo}%" and tbl_lotes.status=true`
+       
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsLote
+        let rsLote = await prisma.$queryRawUnsafe(sql)
+        return rsLote
+        
+    } catch (error) {
+        return false
+    }
+}
+
+// get: buscar o lote existente filtrando pela categoria
+const selectByCategoria = async(categoria) => {
+    try {
+        let sql = `select tbl_lotes.id, tbl_lotes.data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, 
+                        tbl_produto.valor_fixo, tbl_categorias.nome as categoria from tbl_lotes 
+                    inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
+                    inner join tbl_categorias on tbl_categorias.id=tbl_produto.categoria_id
+                    inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
+                    where tbl_categorias.nome like "${categoria}%" and tbl_lotes.status=true`
+       
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsLote
+        let rsLote = await prisma.$queryRawUnsafe(sql)
+        return rsLote
+        
+    } catch (error) {
+        return false
+    }
+}
+
 // get: pegar o ultimo id
 const selectLastId = async () => {
     try {
@@ -183,5 +220,7 @@ module.exports={
     selectAllLotes,
     selectByIdLote,
     selectByDataFinal,
+    selectByValor,
+    selectByCategoria,
     selectLastId
 }

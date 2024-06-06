@@ -311,7 +311,7 @@ app.put('/v1/leilao_expresso/produto/:id', cors(), bodyParserJSON, async(request
 
 // #region LOTES
 
-/****************************** LOTES AAAA***********************************/
+/****************************** LOTES ***********************************/
 // endpoints: listar os lotes
 app.get('/v1/leilao_expresso/lotes', cors(), async(request, response, next) => {
     // chama a função para retornar os dados do produto
@@ -338,6 +338,28 @@ app.get('/v1/leilao_expresso/lote/:id', cors(), async(request, response, next) =
     let idLote = request.params.id
 
     let dadosLote = await controllerLote.getBuscarLote(idLote)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: retorna os dados do lote, filtrando pela categoria
+app.get('/v1/leilao_expresso/lote/categoria/filtro', cors(), async(request, response, next) => {
+    // recebe o id da requisição do lote
+    let categoria = request.query.categoria
+
+    let dadosLote = await controllerLote.getLoteByCategoria(categoria)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: retorna os dados do lote, filtrando pelo valor
+app.get('/v1/leilao_expresso/lote/valor/filtro', cors(), async(request, response, next) => {
+    // recebe o id da requisição do lote
+    let valorFixo = request.query.valorFixo
+
+    let dadosLote = await controllerLote.getLoteByValorFixo(valorFixo)
 
     response.status(dadosLote.status_code)
     response.json(dadosLote)
