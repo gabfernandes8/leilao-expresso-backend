@@ -2,6 +2,11 @@
 
 ## endpoints:
 <br>
+- Hospedado no Render
+```
+https://leilao-expresso-backend.onrender.com
+```
+
 
 <h3> admin </h3>
 
