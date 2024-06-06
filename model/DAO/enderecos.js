@@ -96,7 +96,7 @@ const insertEndereco = async function(dadosEndereco) {
                     null,                    
                     '${dadosEndereco.bairro}', 
                     '${dadosEndereco.cidade}',
-                    '${dadosEndereco.status}'
+                    true
             )`;
         } else {
 
@@ -115,7 +115,7 @@ const insertEndereco = async function(dadosEndereco) {
                     '${dadosEndereco.complemento}',                     
                     '${dadosEndereco.bairro}', 
                     '${dadosEndereco.cidade}',
-                    '${dadosEndereco.status}'
+                    true
             )`;
         }
 
@@ -147,7 +147,7 @@ const updateEndereco = async function(id, dadoAtualizado) {
             complemento = '${dadoAtualizado.complemento}',
             bairro = '${dadoAtualizado.bairro}',
             cidade = '${dadoAtualizado.cidade}',
-            status = '${dadosFilme.status}'
+            status = true
             where
             id = ${id}`
         } else {
@@ -159,7 +159,7 @@ const updateEndereco = async function(id, dadoAtualizado) {
             cpf = '${dadoAtualizado.cpf}',
             complemento = '${dadoAtualizado.complemento}',
             bairro = '${dadoAtualizado.bairro}',
-            status = '${dadosFilme.status}'
+            status = true
             where
             id = ${id}`
         }

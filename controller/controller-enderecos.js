@@ -113,8 +113,8 @@ const setInserirNovoEndereco = async function(dadosEndereco, contentType) {
                 dadosEndereco.logradouro == '' || dadosEndereco.logradouro == undefined || dadosEndereco.logradouro.length > 100 ||
                 dadosEndereco.numero_casa == '' || dadosEndereco.numero_casa == undefined || dadosEndereco.numero_casa.length > 10 ||
                 dadosEndereco.bairro == '' || dadosEndereco.bairro == undefined || dadosEndereco.bairro.length > 45 ||
-                dadosEndereco.cidade == '' || dadosEndereco.cidade == undefined || dadosEndereco.cidade.length > 45 ||
-                dadosEndereco.status == '' || dadosEndereco.status == undefined || dadosEndereco.status.length > 1) {
+                dadosEndereco.cidade == '' || dadosEndereco.cidade == undefined || dadosEndereco.cidade.length > 45
+            ){
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
@@ -136,42 +136,49 @@ const setInserirNovoEndereco = async function(dadosEndereco, contentType) {
                 if (dadosValidated) {
 
                     // encaminha dados para o dao inserir no banco de dados
-                    let novoUsuario = await enderecosDAO.insertEndereco(dadosEndereco)
+                    let novoEndereco = await enderecosDAO.insertEndereco(dadosEndereco)
 
                     // validação dos dados sendo nseridos pelo dao no banco de dados
-                    if (novoUsuario) {
+                    if (novoEndereco) {
+
+                        console.log(novoEndereco);
 
                         // cria o padrão json ´para o retoro dos dados criados
-                        resultDadosEndereco.status = message.SUCESS_CREATED_ITEM.status
-                        resultDadosEndereco.status_code = message.SUCESS_CREATED_ITEM.status_code
-                        resultDadosEndereco.message = message.SUCESS_CREATED_ITEM.message
-                        resultDadosEndereco.filme = dadosEndereco
+                        resultDadosEndereco.status_code = message.SUCCESS_CREATED_ITEM.status_code
+                        resultDadosEndereco.message = message.SUCCESS_CREATED_ITEM.message
+                        resultDadosEndereco.enderecos = dadosEndereco
+
+                        
 
                         return resultDadosEndereco // 201 
                     } else {
-                        return message.ERROR_INTERNAL_SERVER_DB // 500 erro na camada do DAO
+                        return message.ERROR_INTERNAL_SERVER_DBA // 500 erro na camada do DAO
                     }
                 }
             }
         } else {
+            console.log(error);
             return message.ERROR_CONTENT_TYPE
         }
     } catch (error) {
+        console.log(error);
         return message.ERROR_INTERNAL_SERVER
     }
 }
 
 // funcao para atualizar um filme do banco de dados
-const setAtualizarEndereco = async function(idEndereco, dadoAtualizado, contentType) {
+const setAtualizarEndereco = async function(dadosEndereco, idEndereco, contentType) {
     try {
+
+        let endereco = idEndereco
 
         // Validação de content-type (apenas aplication/json)
         if (String(contentType).toLowerCase() == 'application/json') {
             let dadosID = enderecosDAO.selectByIdEndereco()
 
-            if (idEndereco == '' || idEndereco == undefined || idEndereco == isNaN(idEndereco) || idEndereco == null) {
+            if (endereco == '' || endereco == undefined || endereco == isNaN(endereco) || endereco == null) {
                 return message.ERROR_INVALID_ID
-            } else if (idEndereco > dadosID.length) {
+            } else if (endereco > dadosID.length) {
                 return message.ERROR_NOT_FOUND
             } else {
                 // Cria o objeto JSON para devolver os dados criados na requisição
@@ -182,8 +189,7 @@ const setAtualizarEndereco = async function(idEndereco, dadoAtualizado, contentT
                     dadosEndereco.logradouro == '' || dadosEndereco.logradouro == undefined || dadosEndereco.logradouro.length > 100 ||
                     dadosEndereco.numero_casa == '' || dadosEndereco.numero_casa == undefined || dadosEndereco.numero_casa.length > 10 ||
                     dadosEndereco.bairro == '' || dadosEndereco.bairro == undefined || dadosEndereco.bairro.length > 45 ||
-                    dadosEndereco.cidade == '' || dadosEndereco.cidade == undefined || dadosEndereco.cidade.length > 45 ||
-                    dadosEndereco.status == '' || dadosEndereco.status == undefined || dadosEndereco.status.length > 1) {
+                    dadosEndereco.cidade == '' || dadosEndereco.cidade == undefined || dadosEndereco.cidade.length > 45) {
                     return message.ERROR_REQUIRED_FIELDS
                 } else {
                     let validateStatus = false
@@ -207,7 +213,7 @@ const setAtualizarEndereco = async function(idEndereco, dadoAtualizado, contentT
                     if (validateStatus) {
 
                         // Encaminha os dados do filme para o DAO inserir no DB
-                        let dadosEndereco = await enderecosDAO.updateEndereco(idEndereco, dadoAtualizado)
+                        let dadosEndereco = await enderecosDAO.updateEndereco(dadosEndereco, endereco)
 
                         // if(atualizarFilme){
                         //     let idFilmes = await filmesDAO.IDFilme()
@@ -218,6 +224,7 @@ const setAtualizarEndereco = async function(idEndereco, dadoAtualizado, contentT
                         // Validação para verificar se o DAO inseriu os dados do DB
                         if (dadosEndereco) {
 
+                            dadosEndereco.id = endereco
                             //Cria o JSON de retorno dos dados (201)
                             atualizarEnderecoJSON.endereco = dadosEndereco
                             atualizarEnderecoJSON.status = message.SUCCESS_UPDATED_ITEM.status
@@ -226,7 +233,7 @@ const setAtualizarEndereco = async function(idEndereco, dadoAtualizado, contentT
                             return atualizarEnderecoJSON //201
 
                         } else {
-                            return message.ERROR_INTERNAL_SERVER_DB //500
+                            return message.ERROR_INTERNAL_SERVER_DBA //500
                         }
                     } else {
                         validateStatus = false
@@ -237,6 +244,7 @@ const setAtualizarEndereco = async function(idEndereco, dadoAtualizado, contentT
             return message.ERROR_CONTENT_TYPE //415
         }
     } catch (error) {
+        console.log(error);
         return message.ERROR_INTERNAL_SERVER //500 - erro na controller
     }
 }
