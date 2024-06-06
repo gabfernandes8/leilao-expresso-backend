@@ -32,7 +32,6 @@ const selectAllEnderecos = async function() {
     }
 }
 
-
 // listar um usuario por id
 const selectByIdEndereco = async function(id) {
 
@@ -71,7 +70,6 @@ const deleteEndereco = async function(id) {
         return false
     }
 }
-
 
 const insertEndereco = async function(dadosEndereco) {
 
