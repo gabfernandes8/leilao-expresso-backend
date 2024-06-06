@@ -30,6 +30,9 @@ const controllerAdmin = require('./controller/controller-administrator.js')
 const controllerCategoria = require('./controller/controller-categoria.js')
 const controllerProduto = require('./controller/controller-produto.js')
 const controllerLote = require('./controller/controller-lotes.js')
+const controllerUsuarios = require('./controller/controller-usuarios.js')
+const controllerEnderecos = require('./controller/controller-enderecos.js')
+
 /*********************************************************************************/
 
 // #region ADMIN
@@ -410,6 +413,159 @@ app.put('/v1/leilao_expresso/lote/:id', cors(), bodyParserJSON, async(request, r
 
     // encaminha os dados da requisição para a controller enviar para o BD
     let resultDados = await controllerLote.setAtualizarLote(dadosBody, contentType, lote)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+/*************************************************************************/
+
+// #region USUARIO
+
+/****************************** USUARIO ****************************/
+// endpoints: listar os usuarios
+app.get('/v1/leilao_expresso/usuarios', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados dos usuarios
+    let dadosUsuarios = await controllerUsuarios.getListarUsuarios()
+
+    response.status(dadosUsuarios.status_code)
+    response.json(dadosUsuarios)
+})
+
+// endpoint: retorna os dados de usuarios, filtrando pelo ID
+app.get('/v1/leilao_expresso/usuarios/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição do admin
+    let idUsuarios = request.params.id
+
+    let dadosUsuarios = await controllerUsuarios.getBuscarUsuario(idUsuarios)
+
+    response.status(dadosUsuarios.status_code)
+    response.json(dadosUsuarios)
+})
+
+// endpoint: inserir novos Usuarios no Banco de Dados
+// não esquecer de colocar o bodyParserJSON que é quem define o formato de chegada dos dados
+app.post('/v1/leilao_expresso/usuarios', cors(), bodyParserJSON, async(request, response, next) => {
+
+    // recebe o content type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados na requisição no body(JSON)
+    let dadosBody = request.body
+
+    // encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerUsuarios.setInserirNovoUsuario(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+// endpoint: editar o status de usuarios para false para "exclui-lo"
+app.put('/v1/leilao_expresso/usuarios/excluir/:id', cors(), async(request, response, next) => {
+    let usuario = request.params.id
+    let dadosUsuario = await controllerUsuarios.setExcluirUsuario(usuario)
+
+    response.status(dadosUsuario.status_code)
+    response.json(dadosUsuario)
+})
+
+// endpoint: editar os dados da categoria
+app.put('/v1/leilao_expresso/usuarios/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let usuario = request.params.id
+
+    // recebe o content type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados na requisição no body(JSON)
+    let dadosBody = request.body
+
+    // encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerUsuarios.setAtualizarUsuario(dadosBody, contentType, usuario)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+/*************************************************************************/
+
+// #region ENDERECO
+
+/****************************** ENDERECOS ****************************/
+// endpoints: listar os enderecos
+app.get('/v1/leilao_expresso/enderecos', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados dos enderecos
+    let dadosEnderecos = await controllerEnderecos.getListarEnderecos()
+
+    response.status(dadosEnderecos.status_code)
+    response.json(dadosEnderecos)
+})
+
+// endpoint: retorna os dados de enderecos, filtrando pelo ID
+app.get('/v1/leilao_expresso/enderecos/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição do admin
+    let idEnderecos = request.params.id
+
+    let dadosEnderecos = await controllerEnderecos.getBuscarEndereco(idEnderecos)
+
+    response.status(dadosEnderecos.status_code)
+    response.json(dadosEnderecos)
+})
+
+// endpoint: inserir novos enderecos no Banco de Dados
+// não esquecer de colocar o bodyParserJSON que é quem define o formato de chegada dos dados
+app.post('/v1/leilao_expresso/enderecos', cors(), bodyParserJSON, async(request, response, next) => {
+
+    // recebe o content type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados na requisição no body(JSON)
+    let dadosBody = request.body
+
+    // encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerEnderecos.setInserirNovoEndereco(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+// endpoint: editar o status de enderecos para false para "exclui-lo"
+app.put('/v1/leilao_expresso/enderecos/excluir/:id', cors(), async(request, response, next) => {
+    let endereco = request.params.id
+    let dadosEnderecos = await controllerUsuarios.setExcluirUsuario(endereco)
+
+    response.status(dadosEnderecos.status_code)
+    response.json(dadosEnderecos)
+})
+
+// endpoint: editar os dados do endereco
+app.put('/v1/leilao_expresso/enderecos/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let endereco = request.params.id
+
+    // recebe o content type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados na requisição no body(JSON)
+    let dadosBody = request.body
+
+    // encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerEnderecos.setAtualizarEndereco(dadosBody, contentType, endereco)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
+// endpoint: editar os dados da usuario
+app.put('/v1/leilao_expresso/usuarios/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let usuario = request.params.id
+
+    // recebe o content type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados na requisição no body(JSON)
+    let dadosBody = request.body
+
+    // encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerUsuarios.setAtualizarUsuario(dadosBody, contentType, usuario)
     
     response.status(resultDados.status_code)
     response.json(resultDados)
