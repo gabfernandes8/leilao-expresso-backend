@@ -29,7 +29,6 @@ const getListarEnderecos = async function() {
     }
 }
 
-
 // funcao para buscar um usuario específico do banco de dados pelo id
 const getBuscarEndereco = async function(id) {
 
@@ -63,39 +62,58 @@ const getBuscarEndereco = async function(id) {
     }
 }
 
-// funcao para excluir um usuario do banco de dados
-const setExcluirEndereco = async function(id) {
+// delete/put: função para esconder um endereco existente
+const setEditarExcluirEndereco = async (id) => {
+    try {
+        let endereco = id
+        let valEndereco  = await getBuscarEndereco(endereco)
+        let resultDadosEndereco
 
-    // recebe o id do usuario
-    let idEndereco = id
-    let enderecoJSON = {}
+        if (endereco == '' || endereco == undefined || isNaN(endereco)) {
+            return message.ERROR_INVALID_ID // 400
+        } else if(valEndereco.status == false){
+            return message.ERROR_NOT_FOUND // 404
+        }else {
 
-    // validação para id vazio, indefinido ou nao numerico
-    if (idEndereco == '' || idEndereco == undefined || isNaN(idEndereco)) {
-        return message.ERROR_INVALID_ID
-    } else {
+            //envia os dados para a model inserir no BD
+            resultDadosEndereco = await enderecosDAO.updateDeleteEndereco(endereco)
+            //Valida se o BD inseriu corretamente os dados
+            if (resultDadosEndereco)
+                return message.SUCCESS_DELETED_ITEM // 200
+            else
+                return message.ERROR_INTERNAL_SERVER_DBA // 500
 
-        // chama a função do dao para retornar dados no bd
-        let deletePorID = await enderecosDAO.deleteEndereco(idEndereco)
-
-        // verifica se dados no servidor de banco foram processados
-        if (deletePorID) {
-
-            // validação para veificar se existem dados a serem processados
-            if (deletePorID.length > 0) {
-                // montando o json para retornar para o app
-                enderecoJSON.enderecos = deletePorID
-                enderecoJSON.status_code = 500
-                return message.ERROR_INTERNAL_SERVER
-            } else {
-                return message.REQUEST_SUCCEEDED //400
-            }
-        } else {
-            return message.ERROR_INTERNAL_SERVER_DB //500
         }
+        
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
     }
 }
 
+// put: função para ativar um endereco existente
+const setEditarRenovarEndereco = async (id) => {
+    try {
+        let endereco = id
+        let resultDadosEndereco
+
+        if (endereco == '' || endereco == undefined || isNaN(endereco)) {
+            return message.ERROR_INVALID_ID // 400
+        }else {
+
+            //envia os dados para a model inserir no BD
+            resultDadosEndereco = await enderecosDAO.updateRecoverEndereco(endereco)
+            //Valida se o BD inseriu corretamente os dados
+            if (resultDadosEndereco)
+                return message.SUCCESS_UPDATED_ITEM // 200
+            else
+                return message.ERROR_INTERNAL_SERVER_DBA // 500
+
+        }
+        
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+}
 
 // funcao para inserir um novo usuario do banco de dados
 const setInserirNovoEndereco = async function(dadosEndereco, contentType) {
@@ -252,7 +270,8 @@ const setAtualizarEndereco = async function(dadosEndereco, idEndereco, contentTy
 module.exports = {
     setAtualizarEndereco,
     setInserirNovoEndereco,
-    setExcluirEndereco,
     getBuscarEndereco,
+    setEditarExcluirEndereco,
+    setEditarRenovarEndereco,
     getListarEnderecos
 }
