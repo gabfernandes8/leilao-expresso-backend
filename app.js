@@ -528,10 +528,19 @@ app.post('/v1/leilao_expresso/enderecos', cors(), bodyParserJSON, async(request,
 
 })
 
-// endpoint: editar o status de enderecos para false para "exclui-lo"
+// endpoint: editar o status do endereco para false para "exclui-lo"
 app.put('/v1/leilao_expresso/enderecos/excluir/:id', cors(), async(request, response, next) => {
     let endereco = request.params.id
-    let dadosEnderecos = await controllerUsuarios.setExcluirUsuario(endereco)
+    let dadosEnderecos = await controllerEnderecos.setEditarExcluirEndereco(endereco)
+
+    response.status(dadosEnderecos.status_code)
+    response.json(dadosEnderecos)
+})
+
+// endpoint: editar o status do endereco para true para ativa-lo
+app.put('/v1/leilao_expresso/enderecos/ativar/:id', cors(), async(request, response, next) => {
+    let endereco = request.params.id
+    let dadosEnderecos = await controllerEnderecos.setEditarRenovarEndereco(endereco)
 
     response.status(dadosEnderecos.status_code)
     response.json(dadosEnderecos)
