@@ -87,8 +87,7 @@ const insertUsuario = async function(dadosFilme) {
                 senha,
                 cpf,
                 foto_perfil,
-                endereco_id,
-                status
+                endereco_id
                 ) values (
                     '${dadosFilme.nome}', 
                     '${dadosFilme.email}',
@@ -96,9 +95,7 @@ const insertUsuario = async function(dadosFilme) {
                     '${dadosFilme.senha}', 
                     '${dadosFilme.cpf}',
                     null,                    
-                    '${dadosFilme.endereco_id}',
-                    '${dadosFilme.status}'
-                    
+                    '${dadosFilme.endereco_id}'                    
 
             )`;
         } else {
@@ -111,7 +108,6 @@ const insertUsuario = async function(dadosFilme) {
                 cpf,
                 foto_perfil,
                 endereco_id,
-                status
                 ) values (
                     '${dadosFilme.nome}', 
                     '${dadosFilme.email}',
@@ -119,10 +115,7 @@ const insertUsuario = async function(dadosFilme) {
                     '${dadosFilme.senha}', 
                     '${dadosFilme.cpf}',
                     '${dadosFilme.foto_perfil}', 
-                    '${dadosFilme.endereco_id}',
-                    '${dadosFilme.status}'
-                    
-
+                    '${dadosFilme.endereco_id}',                    
             )`;
         }
 
@@ -156,7 +149,6 @@ const updateUsuario = async function(id, dadoAtualizado) {
             cpf = '${dadoAtualizado.cpf}',
             foto_perfil = '${dadoAtualizado.foto_perfil}',
             endereco_id = '${dadoAtualizado.endereco_id}',
-            status = '${dadosFilme.status}'
             where
             id = ${id}`
         } else {
@@ -168,7 +160,6 @@ const updateUsuario = async function(id, dadoAtualizado) {
             cpf = '${dadoAtualizado.cpf}',
             foto_perfil = '${dadoAtualizado.foto_perfil}',
             endereco_id = '${dadoAtualizado.endereco_id}',
-            status = '${dadosFilme.status}'
             where
             id = ${id}`
         }
