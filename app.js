@@ -340,6 +340,28 @@ app.get('/v1/leilao_expresso/lote/:id', cors(), async(request, response, next) =
     response.json(dadosLote)
 })
 
+// endpoint: retorna os dados do lote, filtrando pela categoria
+app.get('/v1/leilao_expresso/lote/categoria/filtro', cors(), async(request, response, next) => {
+    // recebe o id da requisição do lote
+    let categoria = request.query.categoria
+
+    let dadosLote = await controllerLote.getLoteByCategoria(categoria)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: retorna os dados do lote, filtrando pelo valor
+app.get('/v1/leilao_expresso/lote/valor/filtro', cors(), async(request, response, next) => {
+    // recebe o id da requisição do lote
+    let valorFixo = request.query.valorFixo
+
+    let dadosLote = await controllerLote.getLoteByValorFixo(valorFixo)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
 // endpoint: inserir novos lotes no Banco de Dados
     // não esquecer de colocar o bodyParserJSON que é quem define o formato de chegada dos dados
 app.post('/v1/leilao_expresso/lote', cors(), bodyParserJSON, async(request, response, next) => {
