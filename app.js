@@ -322,9 +322,9 @@ app.get('/v1/leilao_expresso/lotes', cors(), async(request, response, next) => {
 })
 
 // endpoint: filtrar pela data de fim
-app.get('/v1/leilao_expresso/lote/filtro', cors(), async(request, response, next) => {
-    let filtro = request.query.data
-
+app.get('/v1/leilao_expresso/lote/filtro/:data', cors(), async(request, response, next) => {
+    let filtro = request.params.data
+    
     // chama a função para retornar os dados do produto
     let dadosLote = await controllerLote.getLoteByDataFinal(filtro)
 
@@ -582,5 +582,5 @@ app.put('/v1/leilao_expresso/usuarios/:id', cors(), bodyParserJSON, async(reques
 /*************************************************************************/
 
 app.listen(8080, () => {
-    console.log('API rodando na porta 8080.')
+    console.log('API rodando.')
 })

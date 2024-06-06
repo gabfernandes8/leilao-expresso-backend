@@ -216,7 +216,7 @@ const getLoteByDataFinal = async (dataFinal) => {
         return message.ERROR_INVALID_PARAM //400
     } else {
         let dadosLote = await loteDAO.selectByDataFinal(filtro)
-
+console.log(dadosLote);
         if (dadosLote) {
             if (dadosLote.length > 0) {
                 lotesJSON.lote = dadosLote
