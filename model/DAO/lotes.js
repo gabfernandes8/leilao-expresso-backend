@@ -145,8 +145,9 @@ const selectByIdLote = async (id) => {
 const selectByDataFinal = async (dataFinal) => {
     
     try {
-        let sql = `select tbl_lotes.id, tbl_lotes.data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente from tbl_lotes 
+        let sql = `select tbl_lotes.id, tbl_lotes.data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, tbl_produto.valor_fixo, tbl_categorias.nome as categoriafrom tbl_lotes 
                     inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
+                    inner join tbl_categorias on tbl_categorias.id=tbl_produto.categoria_id
                     inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
                     where tbl_lotes.data_fim like "%${dataFinal}%" and tbl_lotes.status=true`
        
