@@ -102,7 +102,7 @@ const updateRecoverLote = async(id) => {
 const selectAllLotes = async () => {
 
     try {
-        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, tbl_produto.foto_produto as foto from tbl_lotes 
+        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, tbl_produto.foto_produto as foto, tbl_produto.valor_fixo as valor from tbl_lotes 
                     inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
                     inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
                     where tbl_lotes.status=true
@@ -127,7 +127,7 @@ const selectByIdLote = async (id) => {
     try {
 
         // realiza a busca do produto pelo id
-        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente,  tbl_produto.foto_produto as foto from tbl_lotes 
+        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente,  tbl_produto.foto_produto as foto, tbl_produto.valor_fixo as valor from tbl_lotes 
                     inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
                     inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
                     where tbl_lotes.id=${id} and tbl_lotes.status=true`
@@ -145,7 +145,7 @@ const selectByIdLote = async (id) => {
 const selectByDataFinal = async (dataFinal) => {
     
     try {
-        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, tbl_produto.valor_fixo, tbl_categorias.nome as categoria, tbl_produto.foto_produto as foto from tbl_lotes 
+        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, tbl_produto.valor_fixo, tbl_categorias.nome as categoria, tbl_produto.foto_produto as foto, tbl_produto.valor_fixo as valor from tbl_lotes 
                     inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
                     inner join tbl_categorias on tbl_categorias.id=tbl_produto.categoria_id
                     inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
@@ -164,7 +164,7 @@ const selectByDataFinal = async (dataFinal) => {
 // get: buscar o lote existente filtrando pelo valor
 const selectByValor = async(valorFixo) => {
     try {
-        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, tbl_produto.valor_fixo, tbl_categorias.nome, tbl_produto.foto_produto as foto  from tbl_lotes 
+        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, tbl_produto.valor_fixo, tbl_categorias.nome, tbl_produto.foto_produto as foto, tbl_produto.valor_fixo as valor from tbl_lotes 
                     inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
                     inner join tbl_categorias on tbl_categorias.id=tbl_produto.categoria_id
                     inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
@@ -183,7 +183,7 @@ const selectByValor = async(valorFixo) => {
 const selectByCategoria = async(categoria) => {
     try {
         let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_usuarios.nome as cliente, 
-                    tbl_produto.valor_fixo, tbl_produto.foto_produto as foto, tbl_categorias.nome as categoria from tbl_lotes 
+                    tbl_produto.valor_fixo, tbl_produto.foto_produto as foto, tbl_categorias.nome as categoria, tbl_produto.valor_fixo as valor from tbl_lotes 
                     inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
                     inner join tbl_categorias on tbl_categorias.id=tbl_produto.categoria_id
                     inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id

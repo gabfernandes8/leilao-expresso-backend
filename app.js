@@ -224,7 +224,7 @@ app.get('/v1/leilao_expresso/produtos', cors(), async(request, response, next) =
 })
 
 // endpoint: filtrar pela categoria
-app.get('/v1/leilao_expresso/produto/filtro', cors(), async(request, response, next) => {
+app.get('/v1/leilao_expresso/produto/filtro/:categoria', cors(), async(request, response, next) => {
     let filtro = request.query.categoria
 
     // chama a função para retornar os dados do produto
@@ -234,7 +234,7 @@ app.get('/v1/leilao_expresso/produto/filtro', cors(), async(request, response, n
     response.json(dadosProdutos)
 })
 // endpoint: filtrar pelo nome
-app.get('/v1/leilao_expresso/produto/filtro', cors(), async(request, response, next) => {
+app.get('/v1/leilao_expresso/produto/filtro:nome', cors(), async(request, response, next) => {
     let filtro = request.query.nome
 
     // chama a função para retornar os dados do produto
@@ -462,6 +462,15 @@ app.post('/v1/leilao_expresso/usuarios', cors(), bodyParserJSON, async(request, 
 
 // endpoint: editar o status de usuarios para false para "exclui-lo"
 app.put('/v1/leilao_expresso/usuarios/excluir/:id', cors(), async(request, response, next) => {
+    let usuario = request.params.id
+    let dadosUsuario = await controllerUsuarios.setExcluirUsuario(usuario)
+
+    response.status(dadosUsuario.status_code)
+    response.json(dadosUsuario)
+})
+
+// endpoint: editar o status de usuarios para false para "ativa-lo"
+app.put('/v1/leilao_expresso/usuarios/ativar/:id', cors(), async(request, response, next) => {
     let usuario = request.params.id
     let dadosUsuario = await controllerUsuarios.setExcluirUsuario(usuario)
 
