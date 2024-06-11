@@ -3,227 +3,180 @@
 // // Autor: Eduardo Goncalves de Oliveira
 // // Versao: 1.0
 
-// import da biblioteca do Prisma Client
+// import da biblioteca do prisma client
 const { PrismaClient } = require('@prisma/client')
 
-// istanciando o objeto prisma com as caracterisyicas do prisma client
+// instanciando o objeto prisma com as caracteristicas do prisma client
 const prisma = new PrismaClient()
 
-// listar todos os usuarios existentes na tabela
-const selectAllUsuarios = async function() {
-
+//  post: inserir adm
+const insertUsuario = async(dadosUsuario) => {
     try {
+        let sql
+    
+        sql = `insert into tbl_usuarios (nome, email, telefone, senha, cpf, foto_perfil, endereco_id, status)values(
+                '${dadosUsuario.nome}',
+                '${dadosUsuario.email}',
+                '${dadosUsuario.telefone}',
+                '${dadosUsuario.senha}',
+                '${dadosUsuario.cpf}',
+                '${dadosUsuario.foto_perfil}',
+                ${dadosUsuario.endereco_id},
+               true
+            )`
 
-        // sql script para listar todos os usuarios existentes
-        let sql = 'SELECT * FROM tbl_usuarios ORDER BY id DESC'
-
-        // $queryRawUnsafe(sql) --- encaminha apenas a variável
-        // $queryRaw('SELECT * FROM tbl_filme') --- encaminha o script
-
-        let rsUsuarios = await prisma.$queryRawUnsafe(sql)
-
-        // tratamento de dados para retornar dados ou false
-        if (rsUsuarios.length > 0)
-            return rsUsuarios
-        else
-            return false
-    } catch (error) {
-        return false
-    }
-}
-
-// listar um usuario por id
-const selectByIdUsuario = async function(id) {
-
-    try {
-
-        // sql script para listar os usuarios por id
-        let sql = `SELECT * FROM tbl_usuarios WHERE id =${id}`
-
-        // $queryRawUnsafe(sql) --- encaminha apenas a variável
-        // $queryRaw('SELECT * FROM tbl_filme') --- encaminha o script
-
-        let rsFilmes = await prisma.$queryRawUnsafe(sql)
-
-        return rsFilmes
-    } catch (error) {
-        return false
-    }
-}
-
-
-// deletar um usuario filtrando por id
-const deleteUsuario = async function(id) {
-
-    try {
-
-        // sql script para deletar os usuarios por id
-        let sql = `update tbl_usuarios set status = false WHERE id=${id};`
-
-        // $queryRawUnsafe(sql) --- encaminha apenas a variável
-        // $queryRaw('SELECT * FROM tbl_filme') --- encaminha o script
-        // $executeRawUnsafe(sql) --- execura o script no banco e recebe o retorno dos dados
-
-        let rsUsuarios = await prisma.$executeRawUnsafe(sql)
-
-        return rsUsuarios
-    } catch (error) {
-        return false
-    }
-}
-
-const insertUsuario = async function(dadosFilme) {
-
-    // script sql para inserir no banco de dados
-    try {
-
-        let sql;
-
-        if (dadosFilme.foto_perfil == null) {
-            sql = `INSERT INTO tbl_usuario (
-                nome,
-                email,
-                telefone,
-                senha,
-                cpf,
-                foto_perfil,
-                endereco_id,
-                status
-                ) values (
-                    '${dadosFilme.nome}', 
-                    '${dadosFilme.email}',
-                    '${dadosFilme.telefone}', 
-                    '${dadosFilme.senha}', 
-                    '${dadosFilme.cpf}',
-                    null,                    
-                    '${dadosFilme.endereco_id}' 
-                    true                   
-
-            )`;
-        } else {
-
-            sql = `INSERT INTO tbl_usuario (
-                nome,
-                email,
-                telefone,
-                senha,
-                cpf,
-                foto_perfil,
-                endereco_id,
-                status
-                ) values (
-                    '${dadosFilme.nome}', 
-                    '${dadosFilme.email}',
-                    '${dadosFilme.telefone}', 
-                    '${dadosFilme.senha}', 
-                    '${dadosFilme.cpf}',
-                    '${dadosFilme.foto_perfil}', 
-                    '${dadosFilme.endereco_id}',
-                    true                  
-            )`;
-        }
-
-        // executa o cript sql no banco de dados OBS: DEVEMOS USAR O COMANDO {[( EXECUTE )]} E NÃO O QUERY
+        // executa o sciptSQL no DB (devemos usar o comando execute e não o query)
+        // o comando execute deve ser utilizado para INSERT, UPDATE, DELETE
         let result = await prisma.$executeRawUnsafe(sql)
 
-        // validação para verificar se o insert funcionou no banco de dados
-        if (result)
-            return true
-        else
-            return false
-        f
-
-    } catch (error) {
-        return false
-    }
-}
-
-// atualizar um filme filrando por id
-const updateUsuario = async function(id, dadoAtualizado) {
-    let sql
-    try {
-        if (dadoAtualizado.foto_perfil != '' &&
-            dadoAtualizado.foto_perfil != null &&
-            dadoAtualizado.foto_perfil != undefined) {
-            sql = `update tbl_usuario set 
-            nome = "${dadoAtualizado.nome}",
-            email = "${dadoAtualizado.email}",
-            telefone = '${dadoAtualizado.telefone}',
-            senha = '${dadoAtualizado.senha}',
-            cpf = '${dadoAtualizado.cpf}',
-            foto_perfil = '${dadoAtualizado.foto_perfil}',
-
-            endereco_id = '${dadoAtualizado.endereco_id}',
-
-            where
-            id = ${id}`
-        } else {
-            sql = `update tbl_usuario set 
-            nome = "${dadoAtualizado.nome}",
-            email = "${dadoAtualizado.email}",
-            telefone = '${dadoAtualizado.telefone}',
-            senha = '${dadoAtualizado.senha}',
-            cpf = '${dadoAtualizado.cpf}',
-            foto_perfil = '${dadoAtualizado.foto_perfil}',
-
-            endereco_id = '${dadoAtualizado.endereco_id}',
-
-            where
-            id = ${id}`
-        }
-        console.log(sql)
-        let result = await prisma.$executeRawUnsafe(sql)
-
-        if (result) {
+        // validação para verificar se o insert funcionou no DB
+        if(result){
             return true
         } else {
             return false
         }
+
     } catch (error) {
         return false
     }
 }
 
+// put: atualizar um adm existente filtrando pelo ID
+const updateUsuario = async(dadosUsuario, id) => {
+    try {
+        let sql 
+
+        sql = `update tbl_usuarios set 
+                                            nome = "${dadosUsuario.nome}",
+                                            email = "${dadosUsuario.email}",
+                                            telefone = "${dadosUsuario.telefone}",
+                                            senha = "${dadosUsuario.senha}",
+                                            cpf = "${dadosUsuario.cpf}"
+                                            
+                                            where id = ${id}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
 
 
+        // validação para verificar se o insert funcionou no DB
+        if(result){
+            return true
+        } else {
+            return false
+        }
+    
+    } catch (error) {
+        return false
+    }
+}
+
+// delete/put: método put apenas trocando o status, para "esconder" um admin filtrando pelo ID
+// const updateDeleteAdmin = async(id) => {
+//     try {
+//         let sql = `update tbl_administrador set status = false where id = ${id}`
+
+//         // executa o scriptSQL no BD e recebe o retorno dos dados na variável
+//         let rsAdmin = await prisma.$executeRawUnsafe(sql)
+        
+//         return rsAdmin
+
+//     } catch (error) {
+//         return false
+//     }
+// }
+
+// put: método put apenas trocando o status, para aparecer um admin antes escondido
+const updateRecoverUsuario = async(id) => {
+    try {
+        let sql = `update tbl_usuarios set status = true where id = ${id}`
+
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável
+        let rsAdmin = await prisma.$executeRawUnsafe(sql)
+        
+        return rsAdmin
+
+    } catch (error) {
+        return false
+    }
+}
+
+// get: listar todos os administradores
+const selectAllUsuarios = async () => {
+
+    try {
+        let sql = 'select id, nome, email, senha, telefone, cpf from tbl_usuarios where status = true order by id desc;'
+    
+        // $queryrawUnsafe(‘encaminha apenas a variavel’)
+        // $queryRaw(‘codigo digitado aqui’)
+    
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsAdmin
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+
+        return rsUsuario
+
+    } catch (error) {
+        return false
+    }
+}
+
+// get: buscar o administrador existente filtrando pelo ID
+const selectByIdUsuario = async (id) => {
+
+    try {
+
+        // realiza a busca do ator pelo id
+        let sql = `select * from tbl_usuarios where id=${id} and status=true`
+
+        // executa no DBA o script SQL
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+        return rsUsuario
+
+    } catch (error) {
+        return false
+    }
+}
+
+// get: buscar o admin existente filtrando pelo nome
+const selectByNome = async (nome) => {
+    
+    try {
+        let sql = `select * from tbl_usuarios where nome like '%${nome}%' where status=true`
+    
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsAdmin
+        let rsUsuario = await prisma.$queryRawUnsafe(sql)
+
+        return rsUsuario
+        
+    } catch (error) {
+        return false
+    }
+}
+
+// get: pegar o ultimo id
+const selectLastId = async () => {
+    try {
+
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_administrador limit 1' 
+
+        let rsAdmin = await prisma.$queryRawUnsafe(sql)
+
+        return rsAdmin
+
+    } catch (error) {
+        return false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+    }
+}
 
 
-// // const selectByNome = async(nome) => {
-
-// //     try {
-// //         let sql = `select * from tbl_filme where nome like '%${nome}%'`
-
-// //         // executa o scriptSQL no BD e recebe o retorno dos dados na variável rsFilmes
-// //         let rsFilmes = await prisma.$queryRawUnsafe(sql)
-// //         console.log('to aqui 3')
-
-// //         return rsFilmes
-// //     } catch (error) {
-// //         return false
-// //     }
-// // }
-
-// // const selectLastId = async() => {
-// //     try {
-
-// //         let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_filme limit 1'
-
-// //         let rsFilmes = await prisma.$queryRawUnsafe(sql)
-// //         return rsFilmes
-
-// //     } catch (error) {
-
-// //         return false
-
-// //     }
-// // }
-
-module.exports = {
+module.exports={
     insertUsuario,
     updateUsuario,
-    deleteUsuario,
+    //updateDeleteAdmin,
+    updateRecoverUsuario,
     selectAllUsuarios,
-    selectByIdUsuario
+    selectByIdUsuario,
+    selectByNome,
+    selectLastId
 }
 
 

@@ -431,7 +431,7 @@ app.post('/v1/leilao_expresso/usuarios', cors(), bodyParserJSON, async(request, 
     let dadosBody = request.body
 
     // encaminha os dados da requisição para a controller enviar para o BD
-    let resultDados = await controllerUsuarios.setInserirNovoUsuario(dadosBody, contentType)
+    let resultDados = await controllerUsuarios.setNovoUsuario(dadosBody, contentType)
 
     response.status(resultDados.status_code)
     response.json(resultDados)
