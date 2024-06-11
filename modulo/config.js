@@ -70,6 +70,12 @@ const SUCCESS_UPDATED_ITEM = {
     message: "Item atualizado com sucesso.", 
 }
 
+const VALIDATED_ITEM = {
+    status: true,
+    status_code: 200,
+    message: 'Registro encontrado com sucesso'
+}
+
 module.exports = {
     ERROR_INVALID_ID,
     ERROR_REQUIRED_FIELDS,
@@ -80,5 +86,6 @@ module.exports = {
     ERROR_INTERNAL_SERVER,
     SUCCESS_CREATED_ITEM,
     SUCCESS_DELETED_ITEM,
-    SUCCESS_UPDATED_ITEM
+    SUCCESS_UPDATED_ITEM,
+    VALIDATED_ITEM    
 }

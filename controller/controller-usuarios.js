@@ -24,7 +24,7 @@ const setNovoUsuario = async(dadosUsuario, contentType) => {
              if (dadosUsuario.nome == ''             || dadosUsuario.nome == undefined              || dadosUsuario.nome.length > 150       ||
                 dadosUsuario.email == ''             || dadosUsuario.email == undefined             || dadosUsuario.email.length > 256       ||
                 dadosUsuario.telefone == ''          || dadosUsuario.telefone == undefined          || dadosUsuario.telefone.length > 12    ||
-                dadosUsuario.senha == ''             || dadosUsuario.senha == undefined             || dadosUsuario.senha.length > 30       ||
+                dadosUsuario.senha == ''             || dadosUsuario.senha == undefined             || dadosUsuario.senha.length > 32       ||
                  dadosUsuario.cpf == ''              || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length > 11                       ||
                  dadosUsuario.foto_perfil == ''      || dadosUsuario.foto_perfil == undefined       || dadosUsuario.foto_perfil.length > 255 ||
                  dadosUsuario.endereco_id == ''      || dadosUsuario.endereco_id == undefined       || validacaoEndereco.status_code == false
@@ -33,8 +33,8 @@ const setNovoUsuario = async(dadosUsuario, contentType) => {
             } else {
                 //envia os dados para o DAO inserir no BD
                 let novoUsuario = await usuarioDAO.insertUsuario(dadosUsuario)
-                
-                //validação para verificar se os dados foram inseridos pelo DAO no BD 
+
+                //validação para verificar se os dados foram inseridos pelo DAO no BD
                 if (novoUsuario) {
                     
                     let id = await usuarioDAO.selectLastId()
@@ -64,6 +64,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id) => {
     try {
         
         let usuario = id
+        let validacaoEndereco = await controller_enderecos.selectByIdEndereco(dadosUsuario.endereco_id) 
         
         if (String(contentType).toLowerCase() == 'application/json') {
 
@@ -71,11 +72,12 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id) => {
             let resultDadosAdmin = {}
 
             if (dadosUsuario.nome == ''             || dadosUsuario.nome == undefined              || dadosUsuario.nome.length > 150       ||
-                dadosUsuario.email == ''             || dadosUsuario.email == undefined             || dadosUsuario.email.length > 50       ||
+                dadosUsuario.email == ''             || dadosUsuario.email == undefined             || dadosUsuario.email.length > 256       ||
                 dadosUsuario.telefone == ''          || dadosUsuario.telefone == undefined          || dadosUsuario.telefone.length > 12    ||
-                dadosUsuario.senha == ''             || dadosUsuario.senha == undefined             || dadosUsuario.senha.length > 30       ||
-                dadosUsuario.cpf == ''               || dadosUsuario.cpf == undefined               || dadosUsuario.cpf.length > 11
-            ){
+                 dadosUsuario.cpf == ''              || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length > 11                       ||
+                 dadosUsuario.foto_perfil == ''      || dadosUsuario.foto_perfil == undefined       || dadosUsuario.foto_perfil.length > 255 ||
+                 dadosUsuario.endereco_id == ''      || dadosUsuario.endereco_id == undefined       || validacaoEndereco.status_code == false
+            ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
                 
@@ -84,6 +86,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id) => {
 
                 //validação para verificar se os dados foram inseridos pelo DAO no BD 
                 if (usuarioAtualizado) {
+
                     dadosUsuario.id = usuario
 
                     // cria o padrão de JSON para retorno dos dados criados no DB
@@ -104,6 +107,7 @@ const setAtualizarUsuario = async (dadosUsuario, contentType, id) => {
         }
 
     } catch (error) {
+console.log(error);
         return message.ERROR_INTERNAL_SERVER // 500
     }
 }
@@ -233,8 +237,108 @@ const getUsuarioByNome = async (nome) => {
     }
 }
 
-module.exports={
+const setAtualizarUsuarioSenha = async(dadosUsuario, contentType, idUsuario) => {
+
+    try {
+        
+        if(String(contentType).toLowerCase() == 'application/json'){
+
+            let resultDadosUsuario = {}
+        
+            if( 
+                idUsuario == ''          || idUsuario == undefined          ||
+                dadosUsuario.nome == ''  || dadosUsuario.nome == undefined  || dadosUsuario.nome.length > 100  ||
+                dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 100 ||
+                dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 50 
+            ){
+                
+                return message.ERROR_REQUIRED_FIELDS // 400
+                
+            }else{
+                
+                let usuarioAtualizado = await usuarioDAO.updateUsuarioSenha(dadosUsuario, idUsuario)
+                                        
+                dadosUsuario.id = idUsuario
+
+                if(usuarioAtualizado){
+                    resultDadosUsuario.status = message.UPDATED_ITEM.status
+                    resultDadosUsuario.status_code = message.UPDATED_ITEM.status_code
+                    resultDadosUsuario.message = message.UPDATED_ITEM.message
+                    resultDadosUsuario.usuario = dadosUsuario
+                    return resultDadosUsuario
+                }else {
+
+                    return message.ERROR_INTERNAL_SERVER_DBA // 500
+
+                }
+                
+            }
+    
+        }else{
+            return message.ERROR_CONTENT_TYPE // 415
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
+const getValidarUsuario = async(email, senha, contentType) => {
+    
+    try {
+
+        if(String(contentType).toLowerCase() == 'application/json'){
+    
+            let emailUsuario = email
+            let senhaUsuario = senha
+            let usuarioJSON = {}
+
+            if(emailUsuario == '' || emailUsuario == undefined || senhaUsuario == '' || senhaUsuario == undefined){
+
+                return message.ERROR_REQUIRED_FIELDS // 400
+
+            } else {
+
+                let dadosUsuario = await usuarioDAO.selectValidacaoUsuario(emailUsuario, senhaUsuario)
+
+                console.log(dadosUsuario);
+                if(dadosUsuario){
+
+                    if(dadosUsuario.length > 0){         
+
+                        let usuario = dadosUsuario
+
+                        usuarioJSON.status = message.VALIDATED_ITEM.status       
+                        usuarioJSON.status_code = message.VALIDATED_ITEM.status_code       
+                        usuarioJSON.message = message.VALIDATED_ITEM.message       
+                        usuarioJSON.usuario = usuario
+                
+                        return usuarioJSON
+                    } else {
+                        return message.ERROR_NOT_FOUND // 404
+                    }
+
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DBA // 500
+                }
+            }
+            
+        }else{
+            return message.ERROR_CONTENT_TYPE // 415
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
+
+module.exports = {
+    getValidarUsuario,
     setNovoUsuario,
+    setAtualizarUsuarioSenha,
     setAtualizarUsuario,
     //setEditarExcluiUsuario,
     setEditarRenovarUsuario,
