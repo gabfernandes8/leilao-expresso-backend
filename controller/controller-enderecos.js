@@ -159,7 +159,12 @@ const setInserirNovoEndereco = async function(dadosEndereco, contentType) {
                     // validação dos dados sendo nseridos pelo dao no banco de dados
                     if (novoEndereco) {
 
-                        console.log(novoEndereco);
+                       let id = await enderecosDAO.selectLastId()
+
+                        console.log(id);
+                        dadosEndereco.id = Number(id[0].id)
+
+                        console.log(dadosEndereco);
 
                         // cria o padrão json ´para o retoro dos dados criados
                         resultDadosEndereco.status_code = message.SUCCESS_CREATED_ITEM.status_code

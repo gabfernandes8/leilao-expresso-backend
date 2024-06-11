@@ -3,279 +3,242 @@
 // autor: Eduardo Goncalves de Oliveira
 // versao: 1.0
 
-// import do arq DAO para manipular dados do banco de dados
-const usuariosDAO = require('../model/DAO/usuarios')
-
-const enderecosDAO = require('../model/DAO/enderecos.js')
+// import do arquivo DAO para manipular dados do BD
+const usuarioDAO = require('../model/DAO/usuarios')
+const controller_enderecos = require('../model/DAO/enderecos')
 
 // import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
 
-// funcao para retornar todos os usuarios do banco de dados
-const getListarUsuarios = async function() {
-
-    let usuariosJSON = {}
-
-    // chama a função do dao para retornar dados no bd
-    let dadosUsuarios = await usuariosDAO.selectAllUsuarios()
-
-    const newListUsers = await Promise.all(dadosUsuarios.map(async (usuario)  => {
-        let dadosEnderecoUser = await enderecosDAO.selectByIdEndereco(usuario.endereco_id)
-        
-        usuario.endereco_id = dadosEnderecoUser
-        
-        return usuario
-        
-    }))
-
-    console.log(newListUsers);
-
-    // verifica se existem dados
-    if (newListUsers) {
-        // montando o json para retornar para o app
-        usuariosJSON.usuarios = newListUsers
-        usuariosJSON.quantidade = newListUsers.length
-        usuariosJSON.status_code = 200
-
-
-
-
-
-        // console.log(dadosEnderecoUser);
-        //dadosUsuarios.endereco_id = dadosEnderecoUser
-
-        // console.log(dadosUsuarios);
-
-        return usuariosJSON
-    } else {
-        return false
-    }
-}
-
-
-// funcao para buscar um usuario específico do banco de dados pelo id
-const getBuscarUsuario = async function(id) {
-
-    // recebe o id do usuario
-    let idUsuario = id
-    let usuarioJSON = {}
-
-    // validação para id vazio, indefinido ou nao numerico
-    if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario)) {
-        return message.ERROR_INVALID_ID
-    } else {
-
-        // chama a função do dao para retornar dados no bd
-        let dadosUsuariosPorID = await usuariosDAO.selectByIdUsuario(idUsuario)
-
-        // verifica se dados no servidor de banco foram processados
-        if (dadosUsuariosPorID) {
-
-            // validaão para veificar se existem dados a serem processados
-            if (dadosUsuariosPorID.length > 0) {
-                // montando o json para retornar para o app
-                usuarioJSON.usuarios = dadosUsuariosPorID
-                usuarioJSON.status_code = 200
-                return usuarioJSON //200
-            } else {
-                return message.ERROR_NOT_FOUND //400
-            }
-        } else {
-            return message.ERROR_INTERNAL_SERVER_DB //500
-        }
-    }
-}
-
-// funcao para excluir um usuario do banco de dados
-const setExcluirUsuario = async function(id) {
-
-    // recebe o id do usuario
-    let idUsuario = id
-    let usuarioJSON = {}
-
-    // validação para id vazio, indefinido ou nao numerico
-    if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario)) {
-        return message.ERROR_INVALID_ID
-    } else {
-
-        // chama a função do dao para retornar dados no bd
-        let deletePorID = await usuariosDAO.deleteUsuario(idUsuario)
-
-        // verifica se dados no servidor de banco foram processados
-        if (deletePorID) {
-
-            // validação para veificar se existem dados a serem processados
-            if (deletePorID.length > 0) {
-                // montando o json para retornar para o app
-                usuarioJSON.usuarios = deletePorID
-                usuarioJSON.status_code = 500
-                return message.ERROR_INTERNAL_SERVER
-            } else {
-                return message.REQUEST_SUCCEEDED //400
-            }
-        } else {
-            return message.ERROR_INTERNAL_SERVER_DB //500
-        }
-    }
-}
-
-// funcao para inserir um novo usuario do banco de dados
-const setInserirNovoUsuario = async function(dadosUsuario, contentType) {
-
+// post: função para inserir um novo admin no DBA
+const setNovoUsuario = async(dadosUsuario, contentType) => {
     try {
-
-
-        // recebe o tipo de conteudo Content-type da requisição ( a api deve receber dados application/json)
         if (String(contentType).toLowerCase() == 'application/json') {
 
-            // cia a variavel json
-            let resultDadosUsuario = {}
+            // cria a variável JSON
+            let resultDadosUsuarios = {}
+            let validacaoEndereco = await controller_enderecos.selectByIdEndereco(dadosUsuario.endereco_id) 
 
-            // validação de dados
-            if (dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 150 ||
-                dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 50 ||
-                dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.length > 12 ||
-                dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 30 ||
-                dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length > 11 ||
-                dadosUsuario.foto_perfil == '' || dadosUsuario.foto_perfil == undefined || dadosUsuario.foto_perfil.length > 255 ||
-                dadosUsuario.endereco_id == '' || dadosUsuario.endereco_id == undefined) {
-                return message.ERROR_REQUIRED_FIELDS
+            console.log(dadosUsuario);
+             //Validação para verificar campos obrigatórios e conistência de dados
+             if (dadosUsuario.nome == ''             || dadosUsuario.nome == undefined              || dadosUsuario.nome.length > 150       ||
+                dadosUsuario.email == ''             || dadosUsuario.email == undefined             || dadosUsuario.email.length > 256       ||
+                dadosUsuario.telefone == ''          || dadosUsuario.telefone == undefined          || dadosUsuario.telefone.length > 12    ||
+                dadosUsuario.senha == ''             || dadosUsuario.senha == undefined             || dadosUsuario.senha.length > 30       ||
+                 dadosUsuario.cpf == ''              || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length > 11                       ||
+                 dadosUsuario.foto_perfil == ''      || dadosUsuario.foto_perfil == undefined       || dadosUsuario.foto_perfil.length > 255 ||
+                 dadosUsuario.endereco_id == ''      || dadosUsuario.endereco_id == undefined       || validacaoEndereco.status_code == false
+            ){
+                return message.ERROR_REQUIRED_FIELDS // 400
             } else {
-
-                // variavel para validar se poderemos chamar o dao para inserirf os dados 
-                let dadosValidated = false
-
-                // validação de digitação para a foto de perfil: que não é campo obrigatorio
-                if (dadosUsuario.foto_perfil != null && dadosUsuario.foto_perfil != undefined && dadosUsuario.foto_perfil != "") {
-                    if (dadosUsuario.foto_perfil.length > 255) {
-                        return message.ERROR_REQUIRED_FIELDS; // 400 - campos preenchidos incorretamente
-                    } else {
-                        dadosValidated = true // se a foto estiver dentro do escopo de char definidos
-                    }
-                } else {
-                    dadosValidated = true // se a data não existir nos dados
-                }
-
-                // validação para verificar se podemos encarregar os dados para o dao
-                if (dadosValidated) {
-
-                    // encaminha dados para o dao inserir no banco de dados
-                    let novoUsuario = await usuariosDAO.insertUsuario(dadosUsuario)
-
-                    // validação dos dados sendo nseridos pelo dao no banco de dados
-                    if (novoUsuario) {
-
-                        // cria o padrão json ´para o retoro dos dados criados
-                        resultDadosUsuario.status = message.SUCCESS_CREATED_ITEM.status
-                        resultDadosUsuario.status_code = message.SUCCESS_CREATED_ITEM.status_code
-                        resultDadosUsuario.message = message.SUCCESS_CREATED_ITEM.message
-                        resultDadosUsuario.filme = dadosUsuario
-
-                        return resultDadosUsuario // 201 
-                    } else {
-                        return message.ERROR_INTERNAL_SERVER_DBA // 500 erro na camada do DAO
-                    }
-                }
+                //envia os dados para o DAO inserir no BD
+                let novoUsuario = await usuarioDAO.insertUsuario(dadosUsuario)
+                
+                //validação para verificar se os dados foram inseridos pelo DAO no BD 
+                if (novoUsuario) {
+                    
+                    let id = await usuarioDAO.selectLastId()
+                    
+                    dadosUsuario.id = Number(id[0].id)
+                    
+                    // cria o padrão de JSON para retorno dos dados criados no DB
+                    resultDadosUsuarios.status = message.SUCCESS_CREATED_ITEM.status
+                    resultDadosUsuarios.status_code = message.SUCCESS_CREATED_ITEM.status_code
+                    resultDadosUsuarios.message = message.SUCCESS_CREATED_ITEM.message
+                    resultDadosUsuarios.usuario = dadosUsuario
+                    return resultDadosUsuarios
+                } 
             }
-        } else {
-            return message.ERROR_CONTENT_TYPE
-        }
-    } catch (error) {
-        return message.ERROR_INTERNAL_SERVER
-    }
-}
 
-
-
-// funcao para atualizar um filme do banco de dados
-const setAtualizarUsuario = async function(idUsuario, dadoAtualizado, contentType) {
-    try {
-
-        // Validação de content-type (apenas aplication/json)
-        if (String(contentType).toLowerCase() == 'application/json') {
-            let dadosID = filmesDAO.selectByIdFilme()
-
-            if (idUsuario == '' || idUsuario == undefined || idUsuario == isNaN(idUsuario) || idUsuario == null) {
-                return message.ERROR_INVALID_ID
-            } else if (idUsuario > dadosID.length) {
-                return message.ERROR_NOT_FOUND
-            } else {
-                // Cria o objeto JSON para devolver os dados criados na requisição
-                let atualizarUsuarioJSON = {}
-
-                //Validação de campos obrigatórios ou com digitação inválida
-                if (dadosUsuario.nome == '' || dadosUsuario.nome == undefined || dadosUsuario.nome.length > 150 ||
-                    dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 50 ||
-                    dadosUsuario.telefone == '' || dadosUsuario.telefone == undefined || dadosUsuario.telefone.length > 12 ||
-                    dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 30 ||
-                    dadosUsuario.cpf == '' || dadosUsuario.cpf == undefined || dadosUsuario.cpf.length > 11 ||
-                    dadosUsuario.foto_perfil == '' || dadosUsuario.foto_perfil == undefined || dadosUsuario.foto_perfil.length > 255 ||
-                    dadosUsuario.endereco_id == '' || dadosUsuario.endereco_id == undefined ||
-                    dadosUsuario.status == '' || dadosUsuario.status == undefined || dadosUsuario.status.length > 1) {
-                    return message.ERROR_REQUIRED_FIELDS
-                } else {
-                    let validateStatus = false
-
-                    // Outra validação com campos obrigatorios ou com digitação inválida
-                    if (dadoAtualizado.foto_perfil != null &&
-                        dadoAtualizado.foto_perfil != '' &&
-                        dadoAtualizado.foto_perfil != undefined) {
-
-                        if (dadoAtualizado.foto_perfil.length > 255) {
-                            return message.ERROR_REQUIRED_FIELDS //400
-                        } else {
-                            validateStatus = true
-                        }
-                    } else {
-
-                        validateStatus = true
-                    }
-
-                    // Validação para verificar se a variavel booleana é verdadeira
-                    if (validateStatus) {
-
-                        // Encaminha os dados do filme para o DAO inserir no DB
-                        let dadosUsuario = await usuariosDAO.updateUsuario(idUsuario, dadoAtualizado)
-
-                        // if(atualizarFilme){
-                        //     let idFilmes = await filmesDAO.IDFilme()
-                        //     console.log(idFilmes)
-                        //     dadoAtualizado.id = Number(idFilmes[0].id)
-                        // }
-
-                        // Validação para verificar se o DAO inseriu os dados do DB
-                        if (dadosUsuario) {
-
-                            //Cria o JSON de retorno dos dados (201)
-                            atualizarUsuarioJSON.usuario = dadosUsuario
-                            atualizarUsuarioJSON.status = message.SUCCESS_UPDATED_ITEM.status
-                            atualizarUsuarioJSON.status_code = message.SUCCESS_UPDATED_ITEM.status_code
-                            atualizarUsuarioJSON.message = message.SUCCESS_UPDATED_ITEM.message
-                            return atualizarUsuarioJSON //201
-
-                        } else {
-                            return message.ERROR_INTERNAL_SERVER_DB //500
-                        }
-                    } else {
-                        validateStatus = false
-                    }
-                }
-            }
         } else {
             return message.ERROR_CONTENT_TYPE //415
         }
+
     } catch (error) {
-        return message.ERROR_INTERNAL_SERVER //500 - erro na controller
+        return message.ERROR_INTERNAL_SERVER // 500
     }
 }
 
+// put: função para atualizar um admin existente
+const setAtualizarUsuario = async (dadosUsuario, contentType, id) => {
+    try {
+        
+        let usuario = id
+        
+        if (String(contentType).toLowerCase() == 'application/json') {
 
+            // cria a variável JSON
+            let resultDadosAdmin = {}
 
+            if (dadosUsuario.nome == ''             || dadosUsuario.nome == undefined              || dadosUsuario.nome.length > 150       ||
+                dadosUsuario.email == ''             || dadosUsuario.email == undefined             || dadosUsuario.email.length > 50       ||
+                dadosUsuario.telefone == ''          || dadosUsuario.telefone == undefined          || dadosUsuario.telefone.length > 12    ||
+                dadosUsuario.senha == ''             || dadosUsuario.senha == undefined             || dadosUsuario.senha.length > 30       ||
+                dadosUsuario.cpf == ''               || dadosUsuario.cpf == undefined               || dadosUsuario.cpf.length > 11
+            ){
+                return message.ERROR_REQUIRED_FIELDS // 400
+            } else {
+                
+                //envia os dados para o DAO inserir no BD
+                let usuarioAtualizado = await usuarioDAO.updateUsuario(dadosUsuario, usuario);
 
-module.exports = {
+                //validação para verificar se os dados foram inseridos pelo DAO no BD 
+                if (usuarioAtualizado) {
+                    dadosUsuario.id = usuario
+
+                    // cria o padrão de JSON para retorno dos dados criados no DB
+                    resultDadosAdmin.status = message.SUCCESS_UPDATED_ITEM.status
+                    resultDadosAdmin.status_code = message.SUCCESS_UPDATED_ITEM.status_code
+                    resultDadosAdmin.message = message.SUCCESS_UPDATED_ITEM.message
+                    resultDadosAdmin.usuario = dadosUsuario
+
+                    return resultDadosAdmin
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DBA // 500
+                }
+
+            }
+
+        } else {
+            return message.ERROR_CONTENT_TYPE //415
+        }
+
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER // 500
+    }
+}
+
+// delete/put: função para esconder um admin existente
+// const setEditarExcluirUsuario = async (id) => {
+//     try {
+//         let usuario = id
+//         let valUsuario  = await getBuscarAdmin(usuario)
+//         let resultDadosUsuario
+
+//         if (usuario == '' || usuario == undefined || isNaN(usuario)) {
+//             return message.ERROR_INVALID_ID // 400
+//         } else if(valUsuario.status == false){
+//             return message.ERROR_NOT_FOUND // 404
+//         }else {
+
+//             //envia os dados para a model inserir no BD
+//             resultDadosUsuario = await usuarioDAO.setEditarExcluirUsuario(usuario)
+//             //Valida se o BD inseriu corretamente os dados
+//             if (resultDadosUsuario)
+//                 return message.SUCCESS_DELETED_ITEM // 200
+//             else
+//                 return message.ERROR_INTERNAL_SERVER_DBA // 500
+
+//         }
+        
+//     } catch (error) {
+//         message.ERROR_INTERNAL_SERVER // 500
+//     }
+// }
+
+// put: função para achar um admin existente
+const setEditarRenovarUsuario = async (id) => {
+    try {
+        let usuario = id
+        let resultDadosUsuario
+
+        if (usuario == '' || usuario == undefined || isNaN(usuario)) {
+            return message.ERROR_INVALID_ID // 400
+        }else {
+
+            //envia os dados para a model inserir no BD
+            resultDadosUsuario = await usuarioDAO.updateRecoverUsuario(usuario)
+            //Valida se o BD inseriu corretamente os dados
+            if (resultDadosUsuario)
+                return message.SUCCESS_UPDATED_ITEM // 200
+            else
+                return message.ERROR_INTERNAL_SERVER_DBA // 500
+
+        }
+        
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+}
+
+// get: função para listar todos os admins existentes no DBA
+const getListarUsuarios = async () => {
+    let usuarioJSON = {}
+    let dadosUsuarios = await usuarioDAO.selectAllUsuarios()
+
+    if (dadosUsuarios) {
+        if (dadosUsuarios.length > 0) {
+            usuarioJSON.usuarios = dadosUsuarios
+            usuarioJSON.qt = dadosUsuarios.length
+            usuarioJSON.status_code = 200
+            return usuarioJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    } else {
+        return message.ERROR_INTERNAL_SERVER_DBA
+    }
+}
+
+// get: função para buscar um admin pelo ID
+const getBuscarUsuario = async (id) => {
+    // recebe o id da GegetBuscarClassificacao
+    let idUsuario = id;
+    let usuarioJSON = {}
+    
+    // validação para ID vazio, indefinido ou não numérico
+    if (idUsuario == '' || idUsuario == undefined || isNaN(idUsuario)) {
+        return message.ERROR_INVALID_ID //400
+    } else {
+        let dadosUsuario = await usuarioDAO.selectByIdUsuario(idUsuario)
+
+        if (dadosUsuario) {
+            // validação para verificar se existem dados de retorno
+            if (dadosUsuario.length > 0) {
+                usuarioJSON.usuario = dadosUsuario
+                usuarioJSON.status_code = 200
+                return usuarioJSON
+            } else {
+                return message.ERROR_NOT_FOUND //404
+            }
+
+        } else {
+            return message.ERROR_INTERNAL_SERVER_DBA ///500
+        }
+    }
+}
+
+// get: função para buscar um admin filtrando pelo nome
+const getUsuarioByNome = async (nome) => {
+    let usuarioJSON = {}
+    let filtro = nome
+
+    if (filtro == '' || filtro == undefined) {
+        return message.ERROR_INVALID_PARAM //400
+    } else {
+
+        let dadosUsuario = await usuarioDAO.selectByNome(filtro)
+        if (dadosUsuario) {
+            if (dadosUsuario.length > 0) {
+                usuarioJSON.usuario = dadosUsuario
+                usuarioJSON.qt = dadosUsuario.length
+                usuarioJSON.status_code = 200
+                return usuarioJSON
+            } else {
+                return message.ERROR_NOT_FOUND //404
+            }
+        } else {
+            return message.ERROR_INTERNAL_SERVER_DBA // 500
+        }
+    }
+}
+
+module.exports={
+    setNovoUsuario,
     setAtualizarUsuario,
-    setInserirNovoUsuario,
-    setExcluirUsuario,
+    //setEditarExcluiUsuario,
+    setEditarRenovarUsuario,
+    getListarUsuarios,
     getBuscarUsuario,
-    getListarUsuarios
+    getUsuarioByNome
 }
