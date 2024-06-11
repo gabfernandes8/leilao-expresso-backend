@@ -202,7 +202,7 @@ module.exports = {
     insertEndereco,
     updateEndereco,
     selectLastId,
-    deleteEndereco,
+    //deleteEndereco,
     updateDeleteEndereco,
     updateRecoverEndereco,
     selectAllEnderecos,
