@@ -588,6 +588,194 @@ app.put('/v1/leilao_expresso/usuarios/:id', cors(), bodyParserJSON, async(reques
     response.status(resultDados.status_code)
     response.json(resultDados)
 })
+
+// ********************* VENDAS ******************************
+
+app.get('/v1/leilao_expresso/vendas', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados das vendas
+    let dadosVendas = await controllerVendas.getListarVendas()
+    response.status(dadosVendas.status_code)
+    response.json(dadosVendas)
+})
+
+app.get('/v1/leilao_expresso/vendas/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição das vendas
+    let idVendas = request.params.id
+    let dadosVendas = await controllerVendas.getBuscarVendas(idVendas)
+
+    response.status(dadosVendas.status_code)
+    response.json(dadosVendas)
+})
+
+// endpoint: editar o status das vendas para false para "exclui-la"
+app.put('/v1/leilao_expresso/vendas/excluir/:id', cors(), async(request, response, next) => {
+    let vendas = request.params.id
+    let dadosVendas = await controllerVendas.setEditarExcluirVendas(vendas)
+
+    response.status(dadosVendas.status_code)
+    response.json(dadosVendas)
+})
+
+// endpoint: editar o status das vendas para false para acha-la
+app.put('/v1/leilao_expresso/vendas/ativar/:id', cors(), async(request, response, next) => {
+    let vendas = request.params.id
+    let dadosVendas = await controllerVendas.setEditarRenovarVendas(vendas)
+
+    response.status(dadosVendas.status_code)
+    response.json(dadosVendas)
+})
+
+
+app.post('/v1/leilao_expresso/vendas', cors(), bodyParserJSON, async(request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerVendas.setInserirNovaVendas(dadosBody, contentType)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.put('/v1/leilao_expresso/vendas/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let venda = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerVendas.setAtualizarVendas(dadosBody, contentType, venda)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
+// ********************* LANCES ******************************
+
+app.get('/v1/leilao_expresso/lances', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados dos lances
+    let dadosLances = await controllerLances.getListarLances()
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+})
+
+app.get('/v1/leilao_expresso/lances/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição das vendas
+    let idLances = request.params.id
+    let dadosLances = await controllerLances.getBuscarLances(idLances)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+})
+
+// endpoint: editar o status dos arremates para false para "exclui-los"
+app.put('/v1/leilao_expresso/lances/excluir/:id', cors(), async(request, response, next) => {
+    let lances = request.params.id
+    let dadosLances = await controllerLances.setEditarExcluirLances(lances)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+})
+
+// endpoint: editar o status dos arremtes para false para acha-la
+app.put('/v1/leilao_expresso/lances/ativar/:id', cors(), async(request, response, next) => {
+    let lances = request.params.id
+    let dadosLances = await controllerLances.setEditarRenovarLances(lances)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+})
+
+app.post('/v1/leilao_expresso/lances', cors(), bodyParserJSON, async(request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerLances.setInserirNovoLance(dadosBody, contentType)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.put('/v1/leilao_expresso/lances/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let lance = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerLances.setAtualizarLance(dadosBody, contentType, venda)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
+// ********************* ARREMATES ******************************
+
+app.get('/v1/leilao_expresso/arremates', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados dos arremates
+    let dadosArremates = await controllerArremates.getListarArremates()
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+app.get('/v1/leilao_expresso/arremates/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição dos arremates
+    let idArremates = request.params.id
+    let dadosArremates = await controllerArremates.getBuscarArremates(idArremates)
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+app.put('/v1/leilao_expresso/arremates/excluir/:id', cors(), async(request, response, next) => {
+    // para "excluir" um lance
+    let arremates = request.params.id
+    let dadosArremates = await controllerArremates.setExcluirArremates(arremates)
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+// endpoint: editar o status dos arremates para false para "exclui-los"
+app.put('/v1/leilao_expresso/arremates/excluir/:id', cors(), async(request, response, next) => {
+    let vendas = request.params.id
+    let dadosArremates = await controllerArremates.setEditarExcluirArremates(arremates)
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+// endpoint: editar o status das arremates para false para acha-la
+app.put('/v1/leilao_expresso/arremates/ativar/:id', cors(), async(request, response, next) => {
+    let arremates = request.params.id
+    let dadosArremates = await controllerArremates.setEditarRenovarArremates(arremates)
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+
+app.post('/v1/leilao_expresso/arremates', cors(), bodyParserJSON, async(request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerArremates.setInserirNovoArremate(dadosBody, contentType)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.put('/v1/leilao_expresso/arremates/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let arremates = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerArremates.setAtualizarArremate(dadosBody, contentType, venda)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
 /*************************************************************************/
 
 app.listen(8080, () => {
