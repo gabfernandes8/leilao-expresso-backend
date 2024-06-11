@@ -224,7 +224,7 @@ app.get('/v1/leilao_expresso/produtos', cors(), async(request, response, next) =
 })
 
 // endpoint: filtrar pela categoria
-app.get('/v1/leilao_expresso/produto/filtro', cors(), async(request, response, next) => {
+app.get('/v1/leilao_expresso/produto/filtro/:categoria', cors(), async(request, response, next) => {
     let filtro = request.query.categoria
 
     // chama a função para retornar os dados do produto
@@ -234,7 +234,7 @@ app.get('/v1/leilao_expresso/produto/filtro', cors(), async(request, response, n
     response.json(dadosProdutos)
 })
 // endpoint: filtrar pelo nome
-app.get('/v1/leilao_expresso/produto/filtro', cors(), async(request, response, next) => {
+app.get('/v1/leilao_expresso/produto/filtro:nome', cors(), async(request, response, next) => {
     let filtro = request.query.nome
 
     // chama a função para retornar os dados do produto
@@ -311,7 +311,7 @@ app.put('/v1/leilao_expresso/produto/:id', cors(), bodyParserJSON, async(request
 
 // #region LOTES
 
-/****************************** LOTES AAAA***********************************/
+/****************************** LOTES ***********************************/
 // endpoints: listar os lotes
 app.get('/v1/leilao_expresso/lotes', cors(), async(request, response, next) => {
     // chama a função para retornar os dados do produto
@@ -322,9 +322,9 @@ app.get('/v1/leilao_expresso/lotes', cors(), async(request, response, next) => {
 })
 
 // endpoint: filtrar pela data de fim
-app.get('/v1/leilao_expresso/lote/filtro', cors(), async(request, response, next) => {
-    let filtro = request.query.data
-
+app.get('/v1/leilao_expresso/lote/filtro/:data', cors(), async(request, response, next) => {
+    let filtro = request.params.data
+    
     // chama a função para retornar os dados do produto
     let dadosLote = await controllerLote.getLoteByDataFinal(filtro)
 
@@ -338,6 +338,28 @@ app.get('/v1/leilao_expresso/lote/:id', cors(), async(request, response, next) =
     let idLote = request.params.id
 
     let dadosLote = await controllerLote.getBuscarLote(idLote)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: retorna os dados do lote, filtrando pela categoria
+app.get('/v1/leilao_expresso/lote/categoria/filtro', cors(), async(request, response, next) => {
+    // recebe o id da requisição do lote
+    let categoria = request.query.categoria
+
+    let dadosLote = await controllerLote.getLoteByCategoria(categoria)
+
+    response.status(dadosLote.status_code)
+    response.json(dadosLote)
+})
+
+// endpoint: retorna os dados do lote, filtrando pelo valor
+app.get('/v1/leilao_expresso/lote/valor/filtro', cors(), async(request, response, next) => {
+    // recebe o id da requisição do lote
+    let valorFixo = request.query.valorFixo
+
+    let dadosLote = await controllerLote.getLoteByValorFixo(valorFixo)
 
     response.status(dadosLote.status_code)
     response.json(dadosLote)
@@ -447,6 +469,15 @@ app.put('/v1/leilao_expresso/usuarios/excluir/:id', cors(), async(request, respo
     response.json(dadosUsuario)
 })
 
+// endpoint: editar o status de usuarios para false para "ativa-lo"
+app.put('/v1/leilao_expresso/usuarios/ativar/:id', cors(), async(request, response, next) => {
+    let usuario = request.params.id
+    let dadosUsuario = await controllerUsuarios.setExcluirUsuario(usuario)
+
+    response.status(dadosUsuario.status_code)
+    response.json(dadosUsuario)
+})
+
 // endpoint: editar os dados da categoria
 app.put('/v1/leilao_expresso/usuarios/:id', cors(), bodyParserJSON, async(request, response, next) => {
     let usuario = request.params.id
@@ -517,10 +548,19 @@ app.post('/v1/leilao_expresso/enderecos', cors(), bodyParserJSON, async(request,
 
 })
 
-// endpoint: editar o status de enderecos para false para "exclui-lo"
+// endpoint: editar o status do endereco para false para "exclui-lo"
 app.put('/v1/leilao_expresso/enderecos/excluir/:id', cors(), async(request, response, next) => {
     let endereco = request.params.id
-    let dadosEnderecos = await controllerUsuarios.setExcluirUsuario(endereco)
+    let dadosEnderecos = await controllerEnderecos.setEditarExcluirEndereco(endereco)
+
+    response.status(dadosEnderecos.status_code)
+    response.json(dadosEnderecos)
+})
+
+// endpoint: editar o status do endereco para true para ativa-lo
+app.put('/v1/leilao_expresso/enderecos/ativar/:id', cors(), async(request, response, next) => {
+    let endereco = request.params.id
+    let dadosEnderecos = await controllerEnderecos.setEditarRenovarEndereco(endereco)
 
     response.status(dadosEnderecos.status_code)
     response.json(dadosEnderecos)
@@ -559,9 +599,198 @@ app.put('/v1/leilao_expresso/usuarios/:id', cors(), bodyParserJSON, async(reques
     response.status(resultDados.status_code)
     response.json(resultDados)
 })
+
+// ********************* VENDAS ******************************
+
+app.get('/v1/leilao_expresso/vendas', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados das vendas
+    let dadosVendas = await controllerVendas.getListarVendas()
+    response.status(dadosVendas.status_code)
+    response.json(dadosVendas)
+})
+
+app.get('/v1/leilao_expresso/vendas/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição das vendas
+    let idVendas = request.params.id
+    let dadosVendas = await controllerVendas.getBuscarVendas(idVendas)
+
+    response.status(dadosVendas.status_code)
+    response.json(dadosVendas)
+})
+
+// endpoint: editar o status das vendas para false para "exclui-la"
+app.put('/v1/leilao_expresso/vendas/excluir/:id', cors(), async(request, response, next) => {
+    let vendas = request.params.id
+    let dadosVendas = await controllerVendas.setEditarExcluirVendas(vendas)
+
+    response.status(dadosVendas.status_code)
+    response.json(dadosVendas)
+})
+
+// endpoint: editar o status das vendas para false para acha-la
+app.put('/v1/leilao_expresso/vendas/ativar/:id', cors(), async(request, response, next) => {
+    let vendas = request.params.id
+    let dadosVendas = await controllerVendas.setEditarRenovarVendas(vendas)
+
+    response.status(dadosVendas.status_code)
+    response.json(dadosVendas)
+})
+
+
+app.post('/v1/leilao_expresso/vendas', cors(), bodyParserJSON, async(request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerVendas.setInserirNovaVendas(dadosBody, contentType)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.put('/v1/leilao_expresso/vendas/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let venda = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerVendas.setAtualizarVendas(dadosBody, contentType, venda)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
+// ********************* LANCES ******************************
+
+app.get('/v1/leilao_expresso/lances', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados dos lances
+    let dadosLances = await controllerLances.getListarLances()
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+})
+
+app.get('/v1/leilao_expresso/lances/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição das vendas
+    let idLances = request.params.id
+    let dadosLances = await controllerLances.getBuscarLances(idLances)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+})
+
+// endpoint: editar o status dos arremates para false para "exclui-los"
+app.put('/v1/leilao_expresso/lances/excluir/:id', cors(), async(request, response, next) => {
+    let lances = request.params.id
+    let dadosLances = await controllerLances.setEditarExcluirLances(lances)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+})
+
+// endpoint: editar o status dos arremtes para false para acha-la
+app.put('/v1/leilao_expresso/lances/ativar/:id', cors(), async(request, response, next) => {
+    let lances = request.params.id
+    let dadosLances = await controllerLances.setEditarRenovarLances(lances)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+})
+
+app.post('/v1/leilao_expresso/lances', cors(), bodyParserJSON, async(request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerLances.setInserirNovoLance(dadosBody, contentType)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.put('/v1/leilao_expresso/lances/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let lance = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerLances.setAtualizarLance(dadosBody, contentType, venda)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
+// ********************* ARREMATES ******************************
+
+app.get('/v1/leilao_expresso/arremates', cors(), async(request, response, next) => {
+    // chama a função para retornar os dados dos arremates
+    let dadosArremates = await controllerArremates.getListarArremates()
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+app.get('/v1/leilao_expresso/arremates/:id', cors(), async(request, response, next) => {
+    // recebe o id da requisição dos arremates
+    let idArremates = request.params.id
+    let dadosArremates = await controllerArremates.getBuscarArremates(idArremates)
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+app.put('/v1/leilao_expresso/arremates/excluir/:id', cors(), async(request, response, next) => {
+    // para "excluir" um lance
+    let arremates = request.params.id
+    let dadosArremates = await controllerArremates.setExcluirArremates(arremates)
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+// endpoint: editar o status dos arremates para false para "exclui-los"
+app.put('/v1/leilao_expresso/arremates/excluir/:id', cors(), async(request, response, next) => {
+    let vendas = request.params.id
+    let dadosArremates = await controllerArremates.setEditarExcluirArremates(arremates)
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+// endpoint: editar o status das arremates para false para acha-la
+app.put('/v1/leilao_expresso/arremates/ativar/:id', cors(), async(request, response, next) => {
+    let arremates = request.params.id
+    let dadosArremates = await controllerArremates.setEditarRenovarArremates(arremates)
+
+    response.status(dadosArremates.status_code)
+    response.json(dadosArremates)
+})
+
+
+app.post('/v1/leilao_expresso/arremates', cors(), bodyParserJSON, async(request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerArremates.setInserirNovoArremate(dadosBody, contentType)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.put('/v1/leilao_expresso/arremates/:id', cors(), bodyParserJSON, async(request, response, next) => {
+    let arremates = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerArremates.setAtualizarArremate(dadosBody, contentType, venda)
+    
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
 /*************************************************************************/
 
 app.listen(8080, () => {
+<<<<<<< HEAD
     console.log('API rodando na porta 8080.')
 })
 
@@ -582,4 +811,7 @@ app.post('/v1/leilao_expresso/validacao/usuario', cors(), bodyParserJSON, async(
     response.status(resultDados.status_code)
     response.json(resultDados)
 
+=======
+    console.log('API rodando.')
+>>>>>>> 9aa332a79109b5fd7ba048ec207a9d9d3d141cde
 })

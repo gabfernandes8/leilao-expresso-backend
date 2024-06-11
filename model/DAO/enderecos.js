@@ -32,7 +32,6 @@ const selectAllEnderecos = async function() {
     }
 }
 
-
 // listar um usuario por id
 const selectByIdEndereco = async function(id) {
 
@@ -52,26 +51,35 @@ const selectByIdEndereco = async function(id) {
     }
 }
 
-// deletar um usuario filtrando por id
-const deleteEndereco = async function(id) {
-
+// delete/put: método put apenas trocando o status, para "esconder" um endereço filtrando pelo ID
+const updateDeleteEndereco = async(id) => {
     try {
+        let sql = `update tbl_enderecos set status = false where id = ${id}`
 
-        // sql script para deletar os usuarios por id
-        let sql = `update tbl_enderecos set status = false WHERE id=${id};`
-
-        // $queryRawUnsafe(sql) --- encaminha apenas a variável
-        // $queryRaw('SELECT * FROM tbl_filme') --- encaminha o script
-        // $executeRawUnsafe(sql) --- execura o script no banco e recebe o retorno dos dados
-
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável
         let rsEnderecos = await prisma.$executeRawUnsafe(sql)
-
+        
         return rsEnderecos
+
     } catch (error) {
         return false
     }
 }
 
+// put: método put apenas trocando o status, para ativar um endereco antes escondido
+const updateRecoverEndereco = async(id) => {
+    try {
+        let sql = `update tbl_enderecos set status = true where id = ${id}`
+
+        // executa o scriptSQL no BD e recebe o retorno dos dados na variável
+        let rsEnderecos = await prisma.$executeRawUnsafe(sql)
+        
+        return rsEnderecos
+
+    } catch (error) {
+        return false
+    }
+}
 
 const insertEndereco = async function(dadosEndereco) {
 
@@ -195,6 +203,8 @@ module.exports = {
     updateEndereco,
     selectLastId,
     deleteEndereco,
+    updateDeleteEndereco,
+    updateRecoverEndereco,
     selectAllEnderecos,
     selectByIdEndereco
 }
