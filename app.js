@@ -790,28 +790,5 @@ app.put('/v1/leilao_expresso/arremates/:id', cors(), bodyParserJSON, async(reque
 /*************************************************************************/
 
 app.listen(8080, () => {
-<<<<<<< HEAD
     console.log('API rodando na porta 8080.')
-})
-
-
-
-
-app.post('/v1/leilao_expresso/validacao/usuario', cors(), bodyParserJSON, async(request, response, next) => {
-
-    // recebe o content type da requisição (A API deve receber somente application/json)
-    let contentType = request.headers['content-type']
-
-    //recebe os dados encaminhados na requisição no body(JSON)
-    let dadosBody = request.body
-
-    // encaminha os dados da requisição para a controller enviar para o BD
-    let resultDados = await controllerLote.setNovoLote(dadosBody, contentType)
-    
-    response.status(resultDados.status_code)
-    response.json(resultDados)
-
-=======
-    console.log('API rodando.')
->>>>>>> 9aa332a79109b5fd7ba048ec207a9d9d3d141cde
 })
