@@ -9,44 +9,45 @@
 // import do arquivo DAO para manipular dados do BD
 const produtoDAO = require('../model/DAO/produto.js')
 const controllerCategoria = require('../model/DAO/categoria.js')
+const controllerCategoria2 = require('./controller-categoria.js')
 
 // import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
 
 // post: função para inserir um novo produto no DBA
-const setNovoProduto = async(dadosProduto, contentType) => {
+const setNovoProduto = async (dadosProduto, contentType) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
 
             // cria a variável JSON
             let resultDadosProduto = {}
-            let validacaoCategoria = await controllerCategoria.selectByIdCategoria(dadosProduto.categoria_id) 
+            let validacaoCategoria = await controllerCategoria.selectByIdCategoria(dadosProduto.categoria_id)
 
-             //Validação para verificar campos obrigatórios e conistência de dados
-             if (dadosProduto.nome == ''        || dadosProduto.nome == undefined          || dadosProduto.valor_fixo.length > 65535 || 
-                dadosProduto.descricao == ''    || dadosProduto.descricao == undefined     || dadosProduto.valor_fixo.length > 65535 ||
-                dadosProduto.valor_fixo == ''   || dadosProduto.valor_fixo == undefined    ||
-                dadosProduto.foto_produto == '' || dadosProduto.foto_produto == undefined  || dadosProduto.foto_produto.length > 255 ||
-                dadosProduto.categoria_id == '' || dadosProduto.categoria_id == undefined  || validacaoCategoria.status_code == false
-            ){
+            //Validação para verificar campos obrigatórios e conistência de dados
+            if (dadosProduto.nome == '' || dadosProduto.nome == undefined || dadosProduto.valor_fixo.length > 65535 ||
+                dadosProduto.descricao == '' || dadosProduto.descricao == undefined || dadosProduto.valor_fixo.length > 65535 ||
+                dadosProduto.valor_fixo == '' || dadosProduto.valor_fixo == undefined ||
+                dadosProduto.foto_produto == '' || dadosProduto.foto_produto == undefined || dadosProduto.foto_produto.length > 255 ||
+                dadosProduto.categoria_id == '' || dadosProduto.categoria_id == undefined || validacaoCategoria.status_code == false
+            ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
                 //envia os dados para o DAO inserir no BD
                 let novoProduto = await produtoDAO.insertProduto(dadosProduto)
 
                 //validação para verificar se os dados foram inseridos pelo DAO no BD 
-                if (novoProduto) {                    
+                if (novoProduto) {
                     let id = await produtoDAO.selectLastId()
-                    
+
                     dadosProduto.id = Number(id[0].id)
-                    
+
                     // cria o padrão de JSON para retorno dos dados criados no DB
                     resultDadosProduto.status = message.SUCCESS_CREATED_ITEM.status
                     resultDadosProduto.status_code = message.SUCCESS_CREATED_ITEM.status_code
                     resultDadosProduto.message = message.SUCCESS_CREATED_ITEM.message
                     resultDadosProduto.produto = dadosProduto
                     return resultDadosProduto
-                } 
+                }
             }
 
         } else {
@@ -61,24 +62,24 @@ const setNovoProduto = async(dadosProduto, contentType) => {
 // put: função para atualizar um produto existente
 const setAtualizarProduto = async (dadosProduto, contentType, id) => {
     try {
-        
+
         let produto = id
-        
+
         if (String(contentType).toLowerCase() == 'application/json') {
 
             // cria a variável JSON
             let resultDadosProduto = {}
-            let validacaoCategoria = await controllerCategoria.selectByIdCategoria(dadosProduto.categoria_id) 
+            let validacaoCategoria = await controllerCategoria.selectByIdCategoria(dadosProduto.categoria_id)
 
-            if (dadosProduto.nome == ''         || dadosProduto.nome == undefined          || dadosProduto.nome.length > 65535       ||
-                dadosProduto.descricao == ''    || dadosProduto.descricao == undefined     || dadosProduto.valor_fixo.length > 65535 ||
-                dadosProduto.valor_fixo == ''   || dadosProduto.valor_fixo == undefined    || dadosProduto.valor_fixo.length <= 0    ||
-                dadosProduto.foto_produto == '' || dadosProduto.foto_produto == undefined  || dadosProduto.foto_produto.length > 255 ||
-                dadosProduto.categoria_id == '' || dadosProduto.categoria_id == undefined  || validacaoCategoria.status_code == false
-            ){
+            if (dadosProduto.nome == '' || dadosProduto.nome == undefined || dadosProduto.nome.length > 65535 ||
+                dadosProduto.descricao == '' || dadosProduto.descricao == undefined || dadosProduto.valor_fixo.length > 65535 ||
+                dadosProduto.valor_fixo == '' || dadosProduto.valor_fixo == undefined || dadosProduto.valor_fixo.length <= 0 ||
+                dadosProduto.foto_produto == '' || dadosProduto.foto_produto == undefined || dadosProduto.foto_produto.length > 255 ||
+                dadosProduto.categoria_id == '' || dadosProduto.categoria_id == undefined || validacaoCategoria.status_code == false
+            ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
-                
+
                 //envia os dados para o DAO inserir no BD
                 let produtoAtt = await produtoDAO.updateProduto(dadosProduto, produto)
 
@@ -112,14 +113,14 @@ const setAtualizarProduto = async (dadosProduto, contentType, id) => {
 const setEditarExcluirProduto = async (id) => {
     try {
         let produto = id
-        let valProduto  = await getBuscarProduto(produto)
+        let valProduto = await getBuscarProduto(produto)
         let resultDadosProduto
 
         if (produto == '' || produto == undefined || isNaN(produto)) {
             return message.ERROR_INVALID_ID // 400
-        } else if(valProduto.status == false){
+        } else if (valProduto.status == false) {
             return message.ERROR_NOT_FOUND // 404
-        }else {
+        } else {
 
             //envia os dados para a model inserir no BD
             resultDadosProduto = await produtoDAO.updateDeleteProduto(produto)
@@ -130,7 +131,7 @@ const setEditarExcluirProduto = async (id) => {
                 return message.ERROR_INTERNAL_SERVER_DBA // 500
 
         }
-        
+
     } catch (error) {
         message.ERROR_INTERNAL_SERVER // 500
     }
@@ -144,7 +145,7 @@ const setEditarRenovarProduto = async (id) => {
 
         if (produto == '' || produto == undefined || isNaN(produto)) {
             return message.ERROR_INVALID_ID // 400
-        }else {
+        } else {
 
             //envia os dados para a model inserir no BD
             resultDadosProduto = await produtoDAO.updateRecoverProduto(produto)
@@ -155,7 +156,7 @@ const setEditarRenovarProduto = async (id) => {
                 return message.ERROR_INTERNAL_SERVER_DBA // 500
 
         }
-        
+
     } catch (error) {
         message.ERROR_INTERNAL_SERVER // 500
     }
@@ -168,7 +169,13 @@ const getListarProdutos = async () => {
 
     if (dadosProdutos) {
         if (dadosProdutos.length > 0) {
-            produtoJSON.produtos = dadosProdutos
+           const ArrayProdutos = await Promise.all(dadosProdutos.map(async (produto) => {
+                let categoria = await controllerCategoria.selectByIdCategoria(produto.categoria_id)
+                produto.categoria_id = categoria
+                return produto
+            }))
+
+            produtoJSON.produtos = ArrayProdutos
             produtoJSON.qt = dadosProdutos.length
             produtoJSON.status_code = 200
             return produtoJSON
@@ -185,7 +192,7 @@ const getBuscarProduto = async (id) => {
     // recebe o id
     let idProduto = id;
     let produtoJSON = {}
-    
+
     // validação para ID vazio, indefinido ou não numérico
     if (idProduto == '' || idProduto == undefined || isNaN(idProduto)) {
         return message.ERROR_INVALID_ID //400
@@ -212,7 +219,7 @@ const getBuscarProduto = async (id) => {
 const getProdutoByNome = async (nome) => {
     let produtoJSON = {}
     let filtro = nome
-    
+
     if (filtro == '' || filtro == undefined) {
         return message.ERROR_INVALID_PARAM //400
     } else {
@@ -237,7 +244,7 @@ const getProdutoByNome = async (nome) => {
 const getProdutoByCategoria = async (categoria) => {
     let produtoJSON = {}
     let filtro = categoria
-    
+
     if (filtro == '' || filtro == undefined) {
         return message.ERROR_INVALID_PARAM //400
     } else {
@@ -258,7 +265,7 @@ const getProdutoByCategoria = async (categoria) => {
     }
 }
 
-module.exports={
+module.exports = {
     setNovoProduto,
     setAtualizarProduto,
     setEditarExcluirProduto,
