@@ -129,7 +129,7 @@ https://leilao-expresso-backend.onrender.com
 ```
 - filtrar pelo valor 
 ```
-/v1/leilao_expresso/lote/valor/filtro
+/v1/leilao_expresso/valor/lote
 ```
 - filtrar pela data de fim 
 ```
