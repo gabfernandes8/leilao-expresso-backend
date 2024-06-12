@@ -355,11 +355,12 @@ app.get('/v1/leilao_expresso/lote/categoria/filtro', cors(), async(request, resp
 })
 
 // endpoint: retorna os dados do lote, filtrando pelo valor
-app.get('/v1/leilao_expresso/lote/valor/filtro', cors(), async(request, response, next) => {
+app.get('/v1/leilao_expresso/valor/lote/', cors(), async(request, response, next) => {
     // recebe o id da requisição do lote
-    let valorFixo = request.query.valorFixo
+    let valorInicial = request.query.valorInicial
+    let valorFinal = request.query.valorFinal
 
-    let dadosLote = await controllerLote.getLoteByValorFixo(valorFixo)
+    let dadosLote = await controllerLote.getLoteByValorFixo(valorInicial, valorFinal)
 
     response.status(dadosLote.status_code)
     response.json(dadosLote)

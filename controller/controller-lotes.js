@@ -233,14 +233,15 @@ console.log(dadosLote);
 }
 
 // get: função para buscar um lote filtrando pelo valor
-const getLoteByValorFixo = async (valorFixo) => {
+const getLoteByValorFixo = async (valorInicial, valorFinal) => {
     let lotesJSON = {}
-    let filtro = valorFixo
-    
-    if (filtro == '' || filtro == undefined) {
+    let v1 = valorInicial
+    let v2 = valorFinal
+
+    if (v1 == '' || v1 == undefined || v2 == '' || v2 == undefined) {
         return message.ERROR_INVALID_PARAM //400
     } else {
-        let dadosLote = await loteDAO.selectByValor(filtro)
+        let dadosLote = await loteDAO.selectByValor(v1, v2)
 
         if (dadosLote) {
             if (dadosLote.length > 0) {
