@@ -2,8 +2,14 @@
 
 ## endpoints:
 <br>
-- Hospedado no Render
 
+#### Hospedagem
+
+<div>
+  <img src="https://img.shields.io/badge/Render-0D1117?style=flat-square&logo=render&logoColor=46E3B7" alt="render">
+  <img src="https://img.shields.io/badge/Microsoft_Azure-0D1117?style=flat-square&logo=microsoft-azure&logoColor=blue" alt="azure">
+</div>
+  
 ```
 https://leilao-expresso-backend.onrender.com
 ```
