@@ -62,8 +62,6 @@ const updateLote = async(dadosLote, id) => {
         }
     
     } catch (error) {
-        console.log(error);
-
         return false
     }
 }
@@ -156,7 +154,6 @@ const selectByDataFinal = async (dataFinal) => {
         return rsLote
         
     } catch (error) {
-        console.log(error);
         return false
     }
 }
@@ -164,7 +161,7 @@ const selectByDataFinal = async (dataFinal) => {
 // get: buscar o lote existente filtrando pelo valor
 const selectByValor = async(valor1, valor2) => {
     try {
-        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_produto.valor_fixo as valor, tbl_usuarios.nome as cliente, tbl_produto.foto_produto from tbl_lotes
+        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_produto.valor_fixo as valor, tbl_usuarios.nome as cliente, tbl_produto.foto_produto as foto from tbl_lotes
                     inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
                     inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
                     where tbl_produto.valor_fixo between ${valor1} and ${valor2} and tbl_lotes.status=true`
