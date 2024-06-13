@@ -162,7 +162,7 @@ const selectByDataFinal = async (dataFinal) => {
 // get: buscar o lote existente filtrando pelo valor
 const selectByValor = async(valor1, valor2) => {
     try {
-        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_produto.valor_fixo as valor, tbl_usuarios.nome as cliente, tbl_produto.foto_produto as foto, tbl_categorias.nome from tbl_lotes
+        let sql = `select tbl_lotes.id, date_format(data_fim, "%Y-%m-%d") as data_fim, tbl_produto.nome as produto, tbl_produto.valor_fixo as valor, tbl_usuarios.nome as cliente, tbl_produto.foto_produto as foto, tbl_categorias.nome as categoria from tbl_lotes
                     inner join tbl_produto on tbl_produto.id=tbl_lotes.produto_id
                     inner join tbl_usuarios on tbl_usuarios.id=tbl_lotes.usuario_id
                     inner join tbl_categorias on tbl_categorias.id=tbl_produto.categoria_id
