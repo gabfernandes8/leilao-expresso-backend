@@ -601,6 +601,9 @@ app.put('/v1/leilao_expresso/usuarios/:id', cors(), bodyParserJSON, async(reques
     response.json(resultDados)
 })
 
+
+// #region VENDAS
+
 // ********************* VENDAS ******************************
 
 app.get('/v1/leilao_expresso/vendas', cors(), async(request, response, next) => {
@@ -660,6 +663,8 @@ app.put('/v1/leilao_expresso/vendas/:id', cors(), bodyParserJSON, async(request,
     response.json(resultDados)
 })
 
+// #region LANCES
+
 // ********************* LANCES ******************************
 
 app.get('/v1/leilao_expresso/lances', cors(), async(request, response, next) => {
@@ -718,6 +723,8 @@ app.put('/v1/leilao_expresso/lances/:id', cors(), bodyParserJSON, async(request,
     response.status(resultDados.status_code)
     response.json(resultDados)
 })
+
+// #region ARREMATES
 
 // ********************* ARREMATES ******************************
 
