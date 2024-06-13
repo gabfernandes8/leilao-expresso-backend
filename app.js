@@ -745,25 +745,16 @@ app.get('/v1/leilao_expresso/arremates/:id', cors(), async(request, response, ne
     response.json(dadosArremates)
 })
 
-app.put('/v1/leilao_expresso/arremates/excluir/:id', cors(), async(request, response, next) => {
-    // para "excluir" um lance
-    let arremates = request.params.id
-    let dadosArremates = await controllerArremates.setExcluirArremates(arremates)
-
-    response.status(dadosArremates.status_code)
-    response.json(dadosArremates)
-})
-
 // endpoint: editar o status dos arremates para false para "exclui-los"
 app.put('/v1/leilao_expresso/arremates/excluir/:id', cors(), async(request, response, next) => {
-    let vendas = request.params.id
+    let arremates = request.params.id
     let dadosArremates = await controllerArremates.setEditarExcluirArremates(arremates)
 
     response.status(dadosArremates.status_code)
     response.json(dadosArremates)
 })
 
-// endpoint: editar o status das arremates para false para acha-la
+// endpoint: editar o status das arremates para true para acha-la
 app.put('/v1/leilao_expresso/arremates/ativar/:id', cors(), async(request, response, next) => {
     let arremates = request.params.id
     let dadosArremates = await controllerArremates.setEditarRenovarArremates(arremates)

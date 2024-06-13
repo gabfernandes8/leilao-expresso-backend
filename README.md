@@ -232,3 +232,99 @@ https://leilao-expresso-backend.onrender.com
 <br>
 
 ---
+
+<br>
+
+<h3> vendas </h3>
+
+- listar todos 
+```
+/v1/leilao_expresso/vendas
+```
+- filtrando pelo ID
+```
+/v1/leilao_expresso/vendas/:id
+```
+- inserir
+```
+/v1/leilao_expresso/vendas
+```
+- editar o status para false para "exclui-lo"
+```
+/v1/leilao_expresso/vendas/excluir/:id
+```
+- editar o status para false para ativa-lo
+```
+/v1/leilao_expresso/vendas/ativar/:id
+```
+- editar
+```
+/v1/leilao_expresso/vendas/:id
+```
+<br>
+
+---
+
+<br>
+
+<h3> lances </h3>
+
+- listar todos 
+```
+/v1/leilao_expresso/lances
+```
+- filtrando pelo ID
+```
+/v1/leilao_expresso/lances/:id
+```
+- inserir
+```
+/v1/leilao_expresso/lances
+```
+- editar o status para false para "exclui-lo"
+```
+/v1/leilao_expresso/lances/excluir/:id
+```
+- editar o status para false para ativa-lo
+```
+/v1/leilao_expresso/lances/ativar/:id
+```
+- editar
+```
+/v1/leilao_expresso/lances/:id
+```
+<br>
+
+---
+
+<br>
+
+<h3> arremates </h3>
+
+- listar todos 
+```
+/v1/leilao_expresso/arremates
+```
+- filtrando pelo ID
+```
+/v1/leilao_expresso/arremates/:id
+```
+- inserir
+```
+/v1/leilao_expresso/arremates
+```
+- editar o status para false para "exclui-lo"
+```
+/v1/leilao_expresso/arremates/excluir/:id
+```
+- editar o status para false para ativa-lo
+```
+/v1/leilao_expresso/arremates/ativar/:id
+```
+- editar
+```
+/v1/leilao_expresso/arremates/:id
+```
+<br>
+
+---
